@@ -1,0 +1,66 @@
+# Default values for artifactory-jcr.
+# This is a YAML-formatted file.
+
+# Beware when changing values here. You should know what you are doing!
+# Access the values with {{ .Values.key.subkey }}
+
+# This chart is based on the main artifactory chart with some customizations.
+# See all supported configuration keys in https://github.com/jfrog/charts/tree/master/stable/artifactory
+
+## All values are under the 'artifactory' sub chart.
+artifactory:
+
+  ## Artifactory
+  ## See full list of supported Artifactory options and documentation in artifactory chart: https://github.com/jfrog/charts/tree/master/stable/artifactory
+  artifactory:
+    image:
+      repository: solengha-docker-aws.jfrog.io/jfrog/artifactory-jcr
+      version: 6.15.0-aws
+    resources:
+      requests:
+        memory: "3Gi"
+        cpu: "1"
+      limits:
+        memory: "4Gi"
+        cpu: "2"
+    javaOpts:
+      xms: "3g"
+      xmx: "3g"
+    service:
+      type: LoadBalancer
+    externalPort: 80
+    persistence:
+      size: 100Gi
+
+  installer:
+    platform: jcr-helm
+
+  ## Nginx
+  ## See full list of supported Nginx options and documentation in artifactory chart: https://github.com/jfrog/charts/tree/master/stable/artifactory
+  nginx:
+    enabled: false
+    tlsSecretName: ""
+    service:
+      type: LoadBalancer
+
+  ## Ingress
+  ## See full list of supported Ingress options and documentation in artifactory chart: https://github.com/jfrog/charts/tree/master/stable/artifactory
+  ingress:
+    enabled: false
+    tls: false
+
+  ## PostgreSQL
+  ## See list of supported postgresql options and documentation in artifactory chart: https://github.com/jfrog/charts/tree/master/stable/artifactory
+  ## Configuration values for the PostgreSQL dependency sub-chart
+  ## ref: https://github.com/kubernetes/charts/blob/master/stable/postgresql/README.md
+  postgresql:
+    enabled: false
+
+  ## This key is required for upgrades to protect old PostgreSQL chart's breaking changes.
+  databaseUpgradeReady: "yes"
+
+  waitForDatabase: false
+
+## Enable the PostgreSQL sub chart
+postgresql:
+  enabled: false

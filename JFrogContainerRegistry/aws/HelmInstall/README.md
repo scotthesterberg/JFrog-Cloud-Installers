@@ -1,20 +1,20 @@
-# JFrog Container Registry Helm Chart with external Database
+# JFrog Container Registry Helm Chart for AWS
 
 JFrog Container Registry is a free Artifactory edition with Docker and Helm repositories support.
 
 ## Prerequisites Details
 
-* Kubernetes 1.10+
+* EKS cluster
 * Helm
-* A preinstalled Database
+* (Optional) A preinstalled Database
+* (Optional) An S3 bucket
 
 ## Chart Details
 This chart will do the following:
 
 * Deploy JFrog Container Registry
-* Deploy an optional Nginx server
-* Connect to an external Database
-* Optionally expose Artifactory with Ingress [Ingress documentation](https://kubernetes.io/docs/concepts/services-networking/ingress/)
+* (Optionally) Connect to an external Database
+* (Optionally) Connect to an S3 butcket
 
 ## Installing the Chart
 
@@ -24,6 +24,13 @@ Before installing JFrog helm charts, you need to add the [JFrog helm repository]
 helm repo add jfrog https://charts.jfrog.io
 ```
 
+### To simply get up and running without an external database or S3
+
+1. Download the all-in-one.yaml value file: `wget https://raw.githubusercontent.com/jfrog/JFrog-Cloud-Installers/aws-jcr-6.15.0/JFrogContainerRegistry/aws/HelmInstall/all-in-one.yaml`
+2. Run the helm installation with the all-in-one.yaml file: `helm install --name jfrog-container-registry jfrog/artifactory-jcr -f all-in-one.yaml`
+3. Get the first-time password located at '/var/opt/jfrog/artifactory/generated-pass.txt': `kubectl exec -it jfrog-container-registry-artifactory-0 cat /var/opt/jfrog/artifactory/generated-pass.txt`
+4. Follow the output of the `helm install` command to get the service address
+
 ### Install Chart with external PostgreSQL DB
 To install the chart with the release name `jfrog-container-registry`:
 ```bash
@@ -31,7 +38,7 @@ helm install
   --name jfrog-container-registry \
   --set artifactory.postgresql.enabled=false \
   --set artifactory.database.type=postgresql \
-  --set artifactory.database.url='jdbc:postgresql://${DB_HOST}:${DB_PORT}/my-artifactory-db' \
+  --set artifactory.database.url='jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}' \
   --set artifactory.database.user=${DB_USER} \
   --set artifactory.database.password=${DB_PASSWORD} \
   jfrog/artifactory-jcr
@@ -53,6 +60,60 @@ helm install
 ```
 **NOTE:** You must set `artifactory.postgresql.enabled=false` in order for the chart to use the `database.*` parameters. Without it, they will be ignored!
 
+#### AWS S3
+**NOTE** Keep in mind that when using the `aws-s3` persistence type, you will not be able to provide an IAM on the pod level. 
+In order to grant permissions to Artifactory using an IAM role, you will have to attach the said IAM role to the machine(s) on which Artifactory is running.
+This is due to the fact that the `aws-s3` template uses the `JetS3t` library to interact with AWS. If you want to grant an IAM role at the pod level, see the `AWS S3 Vs` section.
+
+To use an AWS S3 bucket as the cluster's filestore. See [S3 Binary Provider](https://www.jfrog.com/confluence/display/RTF/Configuring+the+Filestore#ConfiguringtheFilestore-S3BinaryProvider)
+- Pass AWS S3 parameters to `helm install` and `helm upgrade`
+```bash
+...
+# With explicit credentials:
+--set artifactory.persistence.type=aws-s3 \
+--set artifactory.persistence.awsS3.endpoint=${AWS_S3_ENDPOINT} \
+--set artifactory.persistence.awsS3.region=${AWS_REGION} \
+--set artifactory.persistence.awsS3.identity=${AWS_ACCESS_KEY_ID} \
+--set artifactory.persistence.awsS3.credential=${AWS_SECRET_ACCESS_KEY} \
+...
+
+...
+# With using existing IAM role
+--set artifactory.persistence.type=aws-s3 \
+--set artifactory.persistence.awsS3.endpoint=${AWS_S3_ENDPOINT} \
+--set artifactory.persistence.awsS3.region=${AWS_REGION} \
+--set artifactory.persistence.awsS3.roleName=${AWS_ROLE_NAME} \
+...
+```
+**NOTE:** Make sure S3 `endpoint` and `region` match. See [AWS documentation on endpoint](https://docs.aws.amazon.com/general/latest/gr/rande.html)
+
+#### AWS S3 V3
+To use an AWS S3 bucket as the cluster's filestore and access it with the official AWS SDK, See [S3 Official SDK Binary Provider](https://www.jfrog.com/confluence/display/RTF/Configuring+the+Filestore#ConfiguringtheFilestore-AmazonS3OfficialSDKTemplate). 
+This filestore template uses the official AWS SDK, unlike th`aws-s3` implementation that uses the `JetS3t` library.
+Use this template if you want to attach an IAM role to the Artifactory pod directly (as opposed to attaching it to the machine/s that Artifactory will run on).
+
+**NOTE** This will have to be combined with a k8s mechanism for attaching IAM roles to pods, like [kube2iam](https://github.com/helm/charts/tree/master/stable/kube2iam) or anything similar.
+ 
+- Pass AWS S3 V3 parameters and the annotation pointing to the IAM role (when using an IAM role. this is kube2iam specific and may vary depending on the implementation) to `helm install` and `helm upgrade`
+
+```bash
+# With explicit credentials:
+--set artifactory.persistence.type=aws-s3-v3 \
+--set artifactory.persistence.awsS3V3.region=${AWS_REGION} \
+--set artifactory.persistence.awsS3V3.bucketName=${AWS_S3_BUCKET_NAME} \
+--set artifactory.persistence.awsS3V3.identity=${AWS_ACCESS_KEY_ID} \
+--set artifactory.persistence.awsS3V3.credential=${AWS_SECRET_ACCESS_KEY} \
+...
+```
+
+```bash
+# With using existing IAM role
+--set artifactory.persistence.type=aws-s3-v3 \
+--set artifactory.persistence.awsS3V3.region=${AWS_REGION} \
+--set artifactory.persistence.awsS3V3.bucketName=${AWS_S3_BUCKET_NAME} \
+--set artifactory.annotations.'iam\.amazonaws\.com/role'=${AWS_IAM_ROLE_ARN}
+...
+```
 
 ### Install Chart with external Other DB
 There are cases where you will want to use a different database and not the enclosed **PostgreSQL**.
