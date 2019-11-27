@@ -14,8 +14,8 @@ artifactory:
   ## See full list of supported Artifactory options and documentation in artifactory chart: https://github.com/jfrog/charts/tree/master/stable/artifactory
   artifactory:
     image:
-      repository: solengha-docker-aws.jfrog.io/jfrog/artifactory-jcr
-      version: 6.15.0-aws
+      repository: 403495124976.dkr.ecr.us-east-1.amazonaws.com/3701884c-2c08-41f3-b4df-84743c6a9f58/cg-259522496/solengha-docker-aws.jfrog.io/jfrog/artifactory-jcr
+      version: 6.15.0-latest
     resources:
       requests:
         memory: "3Gi"
