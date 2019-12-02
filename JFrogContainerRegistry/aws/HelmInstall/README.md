@@ -1,6 +1,6 @@
 # JFrog Container Registry Helm Chart for AWS
 
-JFrog Container Registry is a free Artifactory edition with Docker and Helm repositories support.
+[JFrog Container Registry](https://www.jfrog.com/confluence/display/JCR/Overview) is a free Artifactory edition with Docker and Helm repositories support.
 
 ## Prerequisites Details
 
