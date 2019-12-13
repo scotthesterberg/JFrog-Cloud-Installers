@@ -26,7 +26,7 @@ helm repo add jfrog https://charts.jfrog.io
 
 ### To simply get up and running without an external database or S3
 
-1. Download the all-in-one.yaml value file: `wget https://raw.githubusercontent.com/jfrog/JFrog-Cloud-Installers/aws-jcr-6.15.0/JFrogContainerRegistry/aws/HelmInstall/all-in-one.yaml`
+1. Download the all-in-one.yaml value file: `wget https://raw.githubusercontent.com/jfrog/JFrog-Cloud-Installers/aws-jcr-6.16.0/JFrogContainerRegistry/aws/HelmInstall/all-in-one.yaml`
 2. Run the helm installation with the all-in-one.yaml file: `helm install --name jfrog-container-registry jfrog/artifactory-jcr -f all-in-one.yaml`
 3. After the JFrog Container Registry pod has started (it may take a couple of minutes), get the first-time password located at '/var/opt/jfrog/artifactory/generated-pass.txt': `kubectl exec -it jfrog-container-registry-artifactory-0 cat /var/opt/jfrog/artifactory/generated-pass.txt`
 4. Follow the output of the `helm install` command to get the service address
@@ -36,8 +36,8 @@ To install the chart with the release name `jfrog-container-registry`:
 ```bash
 helm install 
   --name jfrog-container-registry \
-  --set artifactory.artifactory.image.repository=403495124976.dkr.ecr.us-east-1.amazonaws.com/3701884c-2c08-41f3-b4df-84743c6a9f58/cg-259522496/solengha-docker-aws.jfrog.io/jfrog/artifactory-jcr \
-  --set artifactory.artifactory.image.version=6.15.0-latest \
+  --set artifactory.artifactory.image.repository=403495124976.dkr.ecr.us-east-1.amazonaws.com/3701884c-2c08-41f3-b4df-84743c6a9f58/cg-3988177827/solengha-docker-aws.jfrog.io/jfrog/artifactory-jcr \
+  --set artifactory.artifactory.image.version=6.16.0-latest \
   --set artifactory.postgresql.enabled=false \
   --set artifactory.database.type=postgresql \
   --set artifactory.database.url='jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}' \
@@ -53,8 +53,8 @@ To install the chart with the release name `jfrog-container-registry`:
 ```bash
 helm install 
   --name jfrog-container-registry \
-  --set artifactory.artifactory.image.repository=403495124976.dkr.ecr.us-east-1.amazonaws.com/3701884c-2c08-41f3-b4df-84743c6a9f58/cg-259522496/solengha-docker-aws.jfrog.io/jfrog/artifactory-jcr \
-  --set artifactory.artifactory.image.version=6.15.0-latest \
+  --set artifactory.artifactory.image.repository=403495124976.dkr.ecr.us-east-1.amazonaws.com/3701884c-2c08-41f3-b4df-84743c6a9f58/cg-3988177827/solengha-docker-aws.jfrog.io/jfrog/artifactory-jcr \
+  --set artifactory.artifactory.image.version=6.16.0-latest \
   --set artifactory.postgresql.enabled=false \
   --set artifactory.database.type=postgresql \
   --set artifactory.database.url='jdbc:postgresql://${DB_HOST}:${DB_PORT}/my-artifactory-db' \
@@ -132,8 +132,8 @@ To install the chart with the release name `jfrog-container-registry`:
 ```bash
 helm install 
   --name jfrog-container-registry \
-  --set artifactory.artifactory.image.repository=403495124976.dkr.ecr.us-east-1.amazonaws.com/3701884c-2c08-41f3-b4df-84743c6a9f58/cg-259522496/solengha-docker-aws.jfrog.io/jfrog/artifactory-jcr \
-  --set artifactory.artifactory.image.version=6.15.0-latest \
+  --set artifactory.artifactory.image.repository=403495124976.dkr.ecr.us-east-1.amazonaws.com/3701884c-2c08-41f3-b4df-84743c6a9f58/cg-3988177827/solengha-docker-aws.jfrog.io/jfrog/artifactory-jcr \
+  --set artifactory.artifactory.image.version=6.16.0-latest \
   --set artifactory.postgresql.enabled=false \
   --set artifactory.artifactory.preStartCommand="wget -O /opt/jfrog/artifactory/tomcat/lib/mysql-connector-java-5.1.41.jar https://jcenter.bintray.com/mysql/mysql-connector-java/5.1.41/mysql-connector-java-5.1.41.jar" \
   --set artifactory.database.type=mysql \
@@ -196,8 +196,8 @@ Specify each parameter using the `--set key=value[,key=value]` argument to `helm
 To get Helm to create an ingress object with a hostname, add these two lines to your Helm command:
 ```bash
 helm install --name artifactory \
-  --set artifactory.artifactory.image.repository=403495124976.dkr.ecr.us-east-1.amazonaws.com/3701884c-2c08-41f3-b4df-84743c6a9f58/cg-259522496/solengha-docker-aws.jfrog.io/jfrog/artifactory-jcr \
-  --set artifactory.artifactory.image.version=6.15.0-latest \
+  --set artifactory.artifactory.image.repository=403495124976.dkr.ecr.us-east-1.amazonaws.com/3701884c-2c08-41f3-b4df-84743c6a9f58/cg-3988177827/solengha-docker-aws.jfrog.io/jfrog/artifactory-jcr \
+  --set artifactory.artifactory.image.version=6.16.0-latest \
   --set artifactory.nginx.enabled=false \
   --set artifactory.ingress.enabled=true \
   --set artifactory.ingress.hosts[0]="artifactory.company.com" \
