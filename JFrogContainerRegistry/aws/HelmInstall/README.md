@@ -26,7 +26,7 @@ helm repo add jfrog https://charts.jfrog.io
 
 ### To simply get up and running without an external database or S3
 
-1. Download the all-in-one.yaml value file: `wget https://raw.githubusercontent.com/jfrog/JFrog-Cloud-Installers/aws-jcr-6.17.0/JFrogContainerRegistry/aws/HelmInstall/all-in-one.yaml`
+1. Download the all-in-one.yaml value file: `wget https://raw.githubusercontent.com/jfrog/JFrog-Cloud-Installers/aws-jcr-6.18.0/JFrogContainerRegistry/aws/HelmInstall/all-in-one.yaml`
 2. Run the helm installation with the all-in-one.yaml file: `helm install --name jfrog-container-registry jfrog/artifactory-jcr -f all-in-one.yaml`
 3. After the JFrog Container Registry pod has started (it may take a couple of minutes), get the first-time password located at '/var/opt/jfrog/artifactory/generated-pass.txt': `kubectl exec -it jfrog-container-registry-artifactory-0 cat /var/opt/jfrog/artifactory/generated-pass.txt`
 4. Follow the output of the `helm install` command to get the service address
