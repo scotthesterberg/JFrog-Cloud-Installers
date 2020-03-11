@@ -27,7 +27,7 @@ You can print it out with a Docker command:
 ```docker exec -it <container-id> cat /var/opt/jfrog/artifactory/generated-pass.txt```
 
 You can also set a default password by passing it as an environment variable (ARTIFACTORY_PASSWORD) during container creation:
-```docker run -d -p 8081:8081 --env ARTIFACTORY-PASSWORD=<PASSWORD> 117940112483.dkr.ecr.us-east-1.amazonaws.com/3701884c-2c08-41f3-b4df-84743c6a9f58/cg-3826879420/solengha-docker-aws.jfrog.io/jfrog/artifactory-jcr:1583277691:1583277691```
+```docker run -d -p 8081:8081 --env ARTIFACTORY-PASSWORD=<PASSWORD> 117940112483.dkr.ecr.us-east-1.amazonaws.com/3701884c-2c08-41f3-b4df-84743c6a9f58/cg-3826879420/solengha-docker-aws.jfrog.io/jfrog/artifactory-jcr:1583277691```
 
 
 ### For production
