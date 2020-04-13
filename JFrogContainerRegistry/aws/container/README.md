@@ -16,7 +16,7 @@ JFrog Container Registry can be installed into either an ECS or EKS cluster.
 
 To simply get up and running, you can try:
 
-```docker run -d -p 8081:8081 117940112483.dkr.ecr.us-east-1.amazonaws.com/3701884c-2c08-41f3-b4df-84743c6a9f58/cg-3826879420/solengha-docker-aws.jfrog.io/jfrog/artifactory-jcr:1583277691```
+```docker run -d -p 8081:8081 117940112483.dkr.ecr.us-east-1.amazonaws.com/3701884c-2c08-41f3-b4df-84743c6a9f58/fcbc84dc-b08d-4649-bced-8cf56c517f3c/partnership-public-images.jfrog.io/aws/artifactory-jcr:7.3.2-latest```
 
 After this, you can access the UI at \<URL\>:8081. The default username is 'admin'. See 'Getting or setting initial password' to find out how to get the initial password.
 
@@ -27,7 +27,7 @@ You can print it out with a Docker command:
 ```docker exec -it <container-id> cat /var/opt/jfrog/artifactory/generated-pass.txt```
 
 You can also set a default password by passing it as an environment variable (ARTIFACTORY_PASSWORD) during container creation:
-```docker run -d -p 8081:8081 --env ARTIFACTORY-PASSWORD=<PASSWORD> 117940112483.dkr.ecr.us-east-1.amazonaws.com/3701884c-2c08-41f3-b4df-84743c6a9f58/cg-3826879420/solengha-docker-aws.jfrog.io/jfrog/artifactory-jcr:1583277691:1583277691```
+```docker run -d -p 8081:8081 --env ARTIFACTORY-PASSWORD=<PASSWORD> 117940112483.dkr.ecr.us-east-1.amazonaws.com/3701884c-2c08-41f3-b4df-84743c6a9f58/fcbc84dc-b08d-4649-bced-8cf56c517f3c/partnership-public-images.jfrog.io/aws/artifactory-jcr:7.3.2-latest```
 
 
 ### For production
