@@ -23,7 +23,7 @@ The following Vars must be configured.
 
 ### databsase vars
 * db_users: This is a list of database users to create. eg. db_users: - { db_user: "artifactory", db_password: "Art1fAct0ry" }
-* db_name: This is the name of the database to create. eg. "artifactory"
+* dbs: This is the database to create. eg. dbs: - { db_name: "artifactory", db_owner: "artifactory" }
 
 ### artifactory vars
 * master_key: This is the Artifactory Master Key.
@@ -69,3 +69,16 @@ ansible-playbook -i <hosts file> <playbook file>
 eg.
  ansible-playbook -i example-playbooks/rt-xray-ha/hosts.yml example-playbooks/rt-xray-ha/playbook.yml
 ```
+
+## Bastion Hosts
+In many cases, you may want to run this Ansible collection through a Bastion host to provision JFrog servers. You can include the following Var for a host or group of hosts:
+
+```
+ansible_ssh_common_args: '-o ProxyCommand="ssh -i <private key location on bastion> -W %h:%p <bastion_user>@<bastion>"'
+
+eg.
+ansible_ssh_common_args: '-o ProxyCommand="ssh -i ~/.ssh/ansible-priv.pem -W %h:%p ubuntu@13.82.225.208"'
+```
+
+Ensure that you have the private key on the bastion host.
+

@@ -3,7 +3,7 @@
 - name: install ansible-related package
   yum:
     name:
-      - python3-psycopg2
+      - python-psycopg2
       - sudo
       - wget
     state: present
