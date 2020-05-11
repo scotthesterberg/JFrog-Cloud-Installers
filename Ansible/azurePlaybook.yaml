@@ -1,0 +1,21 @@
+---
+- name: Create a resource group
+  azure_rm_resourcegroup:
+    name: AzureAnsibleResourceGroup
+    location: eastus
+- name: Create Azure Deploy
+  azure_rm_deployment:
+    resource_group: AzureAnsibleResourceGroup
+    name: AzureAnsibleInfra
+    parameters:
+      adminUsername:
+        value: ubuntu
+      adminPublicKey:
+        value: YOUR_SSH_PUBLIC_KEY
+      sizeOfDiskInGB:
+        value: 128
+      vmSize:
+        value: Standard_D2s_v3
+      location:
+        value: "[resourceGroup().location]"
+    template_link: 'https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-vm-sshkey/azuredeploy.json'
