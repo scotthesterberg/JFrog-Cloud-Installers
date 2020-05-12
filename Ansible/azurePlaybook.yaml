@@ -1,21 +1,34 @@
 ---
-- name: Create a resource group
-  azure_rm_resourcegroup:
-    name: AzureAnsibleResourceGroup
-    location: eastus
-- name: Create Azure Deploy
-  azure_rm_deployment:
-    resource_group: AzureAnsibleResourceGroup
-    name: AzureAnsibleInfra
-    parameters:
-      adminUsername:
-        value: ubuntu
-      adminPublicKey:
-        value: YOUR_SSH_PUBLIC_KEY
-      sizeOfDiskInGB:
-        value: 128
-      vmSize:
-        value: Standard_D2s_v3
-      location:
-        value: "[resourceGroup().location]"
-    template_link: 'https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-vm-sshkey/azuredeploy.json'
+- name: Azure Infra Provision
+  hosts: localhost
+  connection: local
+  tasks:
+  - name: Create Azure Deploy
+    azure_rm_deployment:
+      resource_group: AzureAnsibleResourceGroup
+      location: eastus
+      name: AzureAnsibleInfra
+      parameters:
+        vnetName:
+          value: "vnetAnsible"
+        vnetAddressRange:
+          value: "10.0.0.0/16"
+        subnetAddressRange:
+          value: "10.0.0.0/24"
+        location:
+          value: "eastus"
+        adminUsername:
+          value: "ubuntu"
+        adminPublicKey:
+          value: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDHcL2I+acSfUje5MijgN0kVXd/LliapwsE0JYaUf/pO6CAqTUoY3OLO2GGoA6LiKlgy39s+kAenf5aHFH0rLI+FkoycSIYzUbihYDrrDvpSTkI1736x4ZAFxmEQj8YCfkSuOlJ0arVjYu/bO4tmCHyNBj7byXDBv7if1aRBmdKIemGBQ09+V7CmAlIAtwdqpbktrPU8btSvm9tag698EvLtHugdiVJ+nCq8KpfARTuRbTce11l29MdGl7n3h5BP6h/0gKI6EI3pZaHwe2g7vk/MFN53cUfPWPASZCd7SWV1QdsI+N5aP6zl0WbRmxiZTtu2IkzzXLtKXuzyuZXL2Kz
+        sizeOfDiskInGB:
+          value: 128
+        vmSize:
+          value: Standard_D2s_v3
+        numberOfArtifactory:
+          value: 2
+        numberOfXray:
+          value: 2
+        numberOfDb:
+          value: 1
+      template_link: 'https://raw.githubusercontent.com/jfrog/JFrog-Cloud-Installers/ansible-rt7/Ansible/infra/azure/lb-rt-xray-ha.json'
