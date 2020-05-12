@@ -98,7 +98,8 @@
     "numberOfXray": "[parameters('numberOfXray')]",
     "numberOfDb": "[parameters('numberOfDb')]",
     "availabilitySetName": "availSet",
-    "vmArt": "vmArt",
+    "vmArtPri": "vmArtPri",
+    "vmArtSec": "vmArtSec",
     "vmXray": "vmXray",
     "vmDb": "vmDb",
     "storageAccountNameDiag": "[concat('diag',uniqueString(resourceGroup().id))]",
@@ -273,11 +274,7 @@
     {
       "apiVersion": "2019-08-01",
       "type": "Microsoft.Network/networkInterfaces",
-      "name": "[concat(variables('vmArt'),copyindex())]",
-      "copy": {
-        "name": "netIntLoop",
-        "count": "[variables('numberOfArtifactory')]"
-      },
+      "name": "[variables('vmArtPri')]",
       "location": "[parameters('location')]",
       "dependsOn": [
         "[variables('vnetName')]",
@@ -300,6 +297,38 @@
               "loadBalancerInboundNatRules": [
                 {
                   "id": "[resourceId('Microsoft.Network/loadBalancers/inboundNatRules', variables('loadBalancerName'), 'ssh')]"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "2019-08-01",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[concat(variables('vmArtSec'),copyindex())]",
+      "copy": {
+        "name": "netIntLoop",
+        "count": "[sub(variables('numberOfArtifactory'),1)]"
+      },
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[variables('vnetName')]",
+        "[variables('loadBalancerName')]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[variables('subnet-id')]"
+              },
+              "loadBalancerBackendAddressPools": [
+                {
+                  "id": "[resourceId('Microsoft.Network/loadBalancers/backendAddressPools',variables('loadBalancerName'),'LBArt')]"
                 }
               ]
             }
@@ -362,15 +391,11 @@
     {
       "apiVersion": "2019-12-01",
       "type": "Microsoft.Compute/virtualMachines",
-      "name": "[concat(variables('vmArt'), copyindex())]",
-      "copy": {
-        "name": "virtualMachineLoop",
-        "count": "[variables('numberOfArtifactory')]"
-      },
+      "name": "[variables('vmArtPri')]",
       "location": "[parameters('location')]",
       "dependsOn": [
         "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountNameDiag'))]",
-        "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('vmArt'),copyindex()))]",
+        "[resourceId('Microsoft.Network/networkInterfaces', variables('vmArtPri'))]",
         "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetName'))]"
       ],
       "properties": {
@@ -381,7 +406,7 @@
           "vmSize": "[parameters('vmSize')]"
         },
         "osProfile": {
-          "computerName": "[concat(variables('vmArt'), copyindex())]",
+          "computerName": "[variables('vmArtPri')]",
           "adminUsername": "[parameters('adminUsername')]",
           "linuxConfiguration": {
             "disablePasswordAuthentication": true,
@@ -409,7 +434,69 @@
         "networkProfile": {
           "networkInterfaces": [
             {
-              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(variables('vmArt'),copyindex()))]"
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',variables('vmArtPri'))]"
+            }
+          ]
+        },
+        "diagnosticsProfile": {
+          "bootDiagnostics": {
+            "enabled": true,
+            "storageUri": "[reference(variables('storageAccountNameDiag'), '2019-06-01').primaryEndpoints.blob]"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "2019-12-01",
+      "type": "Microsoft.Compute/virtualMachines",
+      "name": "[concat(variables('vmArtSec'), copyindex())]",
+      "copy": {
+        "name": "virtualMachineLoop",
+        "count": "[sub(variables('numberOfArtifactory'),1)]"
+      },
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountNameDiag'))]",
+        "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('vmArtSec'),copyindex()))]",
+        "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetName'))]"
+      ],
+      "properties": {
+        "availabilitySet": {
+          "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetName'))]"
+        },
+        "hardwareProfile": {
+          "vmSize": "[parameters('vmSize')]"
+        },
+        "osProfile": {
+          "computerName": "[concat(variables('vmArtSec'), copyindex())]",
+          "adminUsername": "[parameters('adminUsername')]",
+          "linuxConfiguration": {
+            "disablePasswordAuthentication": true,
+            "ssh": {
+              "publicKeys": [
+                {
+                  "path": "[concat('/home/', parameters('adminUsername'), '/.ssh/authorized_keys')]",
+                  "keyData": "[parameters('adminPublicKey')]"
+                }
+              ]
+            }
+          }
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "[variables('imagePublisher')]",
+            "offer": "[variables('imageOffer')]",
+            "sku": "[variables('imageSku')]",
+            "version": "latest"
+          },
+          "osDisk": {
+            "createOption": "FromImage"
+          }
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(variables('vmArtSec'),copyindex()))]"
             }
           ]
         },
