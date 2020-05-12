@@ -116,7 +116,7 @@
       "name": "[variables('loadBalancerIp')]",
       "location": "[parameters('location')]",
       "properties": {
-        "publicIPAllocationMethod": "Dynamic"
+        "publicIPAllocationMethod": "Static"
       }
     },
     {
@@ -204,7 +204,7 @@
       "type": "Microsoft.Network/loadBalancers",
       "location": "[parameters('location')]",
       "dependsOn": [
-        "[variables('loadBalancerIp')]"
+        "[concat('Microsoft.Network/publicIPAddresses/',variables('loadBalancerIp'))]"
       ],
       "properties": {
         "frontendIpConfigurations": [
@@ -632,5 +632,36 @@
         }
       }
     }
-  ]
+  ],
+  "outputs": {
+    "lbIp": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses', variables('loadBalancerIp'))).ipAddress]"
+    },
+    "vmArtPriIp": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Network/networkInterfaces', variables('vmArtPri'))).ipConfigurations[0].properties.privateIPAddress]"
+    },
+    "vmArtSecArrIp": {
+      "type": "array",
+      "copy": {
+        "count": "[sub(variables('numberOfArtifactory'),1)]",
+        "input": "[reference(resourceId('Microsoft.Network/networkInterfaces', concat(variables('vmArtSec'),copyindex()))).ipConfigurations[0].properties.privateIPAddress]"
+      }
+    },
+    "vmXrayArrIp": {
+      "type": "array",
+      "copy": {
+        "count": "[variables('numberOfXray')]",
+        "input": "[reference(resourceId('Microsoft.Network/networkInterfaces', concat(variables('vmXray'),copyindex()))).ipConfigurations[0].properties.privateIPAddress]"
+      }
+    },
+    "vmDbArrIp": {
+      "type": "array",
+      "copy": {
+        "count": "[variables('numberOfDb')]",
+        "input": "[reference(resourceId('Microsoft.Network/networkInterfaces', concat(variables('vmDb'),copyindex()))).ipConfigurations[0].properties.privateIPAddress]"
+      }
+    }
+  }
 }
