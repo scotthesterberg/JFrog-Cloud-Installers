@@ -81,7 +81,7 @@
     password: "{{ item.db_password }}"
     conn_limit: "-1"
   loop: "{{ db_users|default([]) }}"
-  no_log: false  # secret passwords
+  no_log: true  # secret passwords
 
 - name: Create a database
   become_user: postgres

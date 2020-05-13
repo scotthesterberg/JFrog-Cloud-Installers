@@ -106,7 +106,7 @@
     "subnet-id": "[resourceId('Microsoft.Network/virtualNetworks/subnets',variables('vnetName'),variables('subnetName'))]",
     "imagePublisher": "Canonical",
     "imageOffer": "UbuntuServer",
-    "imageSku": "16.04-LTS",
+    "imageSku": "18.04-LTS",
     "mainNsg": "mainNsg"
   },
   "resources": [
