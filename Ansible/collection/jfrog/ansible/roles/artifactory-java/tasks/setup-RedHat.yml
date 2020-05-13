@@ -3,4 +3,4 @@
   package:
     name: "{{ java_packages }}"
     state: present
-  become: true
+  become: yes

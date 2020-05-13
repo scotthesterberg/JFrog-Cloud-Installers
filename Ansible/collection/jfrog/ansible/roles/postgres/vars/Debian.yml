@@ -1,7 +1,7 @@
 ---
 
 postgres_server_cmd_initdb: /usr/lib/postgresql/{{ postgres_server_version }}/bin/initdb -D
-postgres_server_initdb_become: True
+postgres_server_initdb_become: yes
 postgres_server_data_location: /var/lib/postgresql/{{ postgres_server_version }}/main
 postgres_server_config_location: /etc/postgresql/{{ postgres_server_version }}/main
 postgres_server_service_name: postgresql@{{ postgres_server_version }}-main

@@ -5,7 +5,7 @@
   when: >  # not for Fedora
     ansible_distribution == 'CentOS' or
     ansible_distribution == 'Red Hat Enterprise Linux'
-  become: True
+  become: yes
 
 - name: install ansible-related package
   yum:
@@ -15,7 +15,7 @@
       - wget
       - perl
     state: present
-  become: True
+  become: yes
 
 - name: fixup some locale issues
   lineinfile:
@@ -52,7 +52,7 @@
   yum:
     name: "{{ base }}/{{ postgres_server_version }}/redhat/rhel-{{ ver }}-x86_64/{{ latest_version.stdout }}"
     state: present
-  become: True
+  become: yes
 
 - name: install postgres packages
   yum:
@@ -61,4 +61,4 @@
       - postgresql{{ postgres_server_pkg_version }}-contrib
       - postgresql{{ postgres_server_pkg_version }}-devel
     state: present
-  become: True
+  become: yes

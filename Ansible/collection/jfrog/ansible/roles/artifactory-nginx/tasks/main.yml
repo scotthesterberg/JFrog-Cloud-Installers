@@ -1,10 +1,9 @@
 ---
-# tasks file for artifactory-nginx
 - name: install nginx
   package:
     name: nginx
     state: present
-  become: true
+  become: yes
 
 - name: configure main nginx conf file.
   copy:
@@ -13,7 +12,7 @@
     owner: root
     group: root
     mode: '0755'
-  become: true
+  become: yes
 
 - name: configure the artifactory nginx conf
   template:
@@ -22,11 +21,11 @@
     owner: root
     group: root
     mode: '0755'
-  become: true
+  become: yes
 
 - name: restart nginx
   service:
     name: nginx
     state: restarted
     enabled: yes
-  become: true
+  become: yes

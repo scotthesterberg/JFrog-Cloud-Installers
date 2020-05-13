@@ -7,21 +7,21 @@
       - sudo
       - wget
     state: present
-  become: True
+  become: yes
 
 - name: add postgres apt key
   apt_key:
     url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
     id: "0x7FCC7D46ACCC4CF8"
     state: present
-  become: True
+  become: yes
 
 - name: register APT repository
   apt_repository:
     repo: deb http://apt.postgresql.org/pub/repos/apt/ {{ ansible_distribution_release }}-pgdg main
     state: present
     filename: pgdg
-  become: True
+  become: yes
 
 - name: install postgres packages
   apt:
@@ -30,4 +30,4 @@
       - postgresql-server-dev-{{ postgres_server_version }}
       - postgresql-contrib-{{ postgres_server_version }}
     state: present
-  become: True
+  become: yes

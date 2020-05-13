@@ -3,20 +3,20 @@
   group:
     name: "{{ xray_group }}"
     state: present
-  become: true
+  become: yes
 
 - name: create user for xray
   user:
     name: "{{ xray_user }}"
     group: "{{ xray_group }}"
     system: yes
-  become: true
+  become: yes
 
 - name: ensure xray_download_directory exists
   file:
     path: "{{ xray_download_directory }}"
     state: directory
-  become: true
+  become: yes
 
 - name: download xray
   unarchive:
@@ -26,7 +26,7 @@
     owner: "{{ xray_user }}"
     group: "{{ xray_group }}"
     creates: "{{ xray_home }}"
-  become: true
+  become: yes
   register: downloadxray
   until: downloadxray is succeeded
   retries: 3
@@ -40,13 +40,13 @@
     state: directory
     owner: "{{ xray_user }}"
     group: "{{ xray_group }}"
-  become: true
+  become: yes
   
 - name: configure system yaml
   template:
     src: system.yaml.j2
     dest: "{{ xray_home }}/var/etc/system.yaml"
-  become: true
+  become: yes
 
 - name: ensure {{ xray_home }}/var/etc/security/ exists
   file:
@@ -54,19 +54,19 @@
     state: directory
     owner: "{{ xray_user }}"
     group: "{{ xray_group }}"
-  become: true
+  become: yes
 
 - name: configure master key
   template:
     src: master.key.j2
     dest: "{{ xray_home }}/var/etc/security/master.key"
-  become: true
+  become: yes
 
 - name: configure join key
   template:
     src: join.key.j2
     dest: "{{ xray_home }}/var/etc/security/join.key"
-  become: true
+  become: yes
 
 - name: ensure {{ xray_home }}/var/etc/info/ exists
   file:
@@ -74,20 +74,20 @@
     state: directory
     owner: "{{ xray_user }}"
     group: "{{ xray_group }}"
-  become: true
+  become: yes
 
 - name: configure installer info
   template:
     src: installer-info.json.j2
     dest: "{{ xray_home }}/var/etc/info/installer-info.json"
-  become: true
+  become: yes
 
 - name: create xray service
   shell: "{{ xray_home }}/app/bin/installService.sh"
-  become: true
+  become: yes
 
 - name: start and enable xray
   service:
     name: xray
     state: restarted
-  become: true
+  become: yes

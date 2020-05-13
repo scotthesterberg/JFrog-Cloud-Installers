@@ -3,7 +3,7 @@ This repo contains the Ansible collection for JFrog roles. These roles allow you
 
 ## Roles Provided
 ### artifactory
-The artifactory role installs the Artifactory Pro software onto the host. Per the Vars below, it will configure a node as primary or secondary. This role uses secondary roles artifactory-nginx and artifactory-java to install nginx and java dependencies.
+The artifactory role installs the Artifactory Pro software onto the host. Per the Vars below, it will configure a node as primary or secondary. This role uses secondary roles artifactory-nginx to install nginx.
 
 ### artifactory-nginx-ssl
 The artifactory-nginx-ssl role installs and configures nginx for SSL.
@@ -26,6 +26,7 @@ The following Vars must be configured.
 * dbs: This is the database to create. eg. dbs: - { db_name: "artifactory", db_owner: "artifactory" }
 
 ### artifactory vars
+* artifactory_version: The version of Artifactory to install. eg. "7.4.1"
 * master_key: This is the Artifactory Master Key.
 * join_key: This is the Artifactory Join Key.
 * db_download_url: This is the download URL for the JDBC driver for your database. eg. "https://jdbc.postgresql.org/download/postgresql-42.2.12.jar"
@@ -48,6 +49,7 @@ The following Vars must be configured.
 * certificate_key: This is the SSL private key.
 
 ### xray vars
+* xray_version: The version of Artifactory to install. eg. "3.3.0"
 * jfrog_url: This is the URL to the Artifactory base URL. eg. "http://ec2-54-237-207-135.compute-1.amazonaws.com"
 * master_key: This is the Artifactory Master Key.
 * join_key: This is the Artifactory Join Key.

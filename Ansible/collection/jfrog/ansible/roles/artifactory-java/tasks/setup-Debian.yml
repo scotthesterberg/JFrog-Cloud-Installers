@@ -10,9 +10,12 @@
     - ansible_distribution == 'Ubuntu'
     - ansible_distribution_version == '18.04'
 
+- name: Wait for any possibly running unattended upgrade to finish
+  raw: systemd-run --property="After=apt-daily.service apt-daily-upgrade.service" --wait /bin/true
+  become: yes
+
 - name: Ensure Java is installed.
   apt:
-    update_cache: yes
     name: "{{ java_packages }}"
     state: present
-  become: true
+  become: yes

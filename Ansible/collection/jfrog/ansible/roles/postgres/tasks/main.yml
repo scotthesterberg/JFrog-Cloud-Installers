@@ -18,7 +18,7 @@
   file:
     path: "{{ postgres_server_bind_mount_var_lib_pgsql_target }}"
     state: directory
-  become: true
+  become: yes
   when: postgres_server_bind_mount_var_lib_pgsql
 
 
@@ -29,7 +29,7 @@
     opts: bind
     state: mounted
     fstype: none
-  become: true
+  become: yes
   when: postgres_server_bind_mount_var_lib_pgsql
 
 - name: perform installation
@@ -40,7 +40,7 @@
     dest: /etc/profile.d/postgres-path.sh
     mode: a=rx
     content: "export PATH=$PATH:/usr/pgsql-{{ postgres_server_version }}/bin"
-  become: true
+  become: yes
 
 - name: initialize PostgreSQL database cluster
   environment:
@@ -71,11 +71,11 @@
     name: "{{ postgres_server_service_name }}"
     state: started
     enabled: yes
-  become: true
+  become: yes
 
 - name: Create users
   become_user: postgres
-  become: true
+  become: yes
   postgresql_user:
     name: "{{ item.db_user }}"
     password: "{{ item.db_password }}"
@@ -85,7 +85,7 @@
 
 - name: Create a database
   become_user: postgres
-  become: true
+  become: yes
   postgresql_db:
     name: "{{ item.db_name }}"
     owner: "{{ item.db_owner }}"
@@ -94,7 +94,7 @@
 
 - name: Grant privs on db
   become_user: postgres
-  become: true
+  become: yes
   postgresql_privs:
     database: "{{ item.db_name }}"
     role: "{{ item.db_owner }}"
@@ -107,4 +107,4 @@
   service:
     name: "{{ postgres_server_service_name }}"
     state: restarted
-  become: true
+  become: yes

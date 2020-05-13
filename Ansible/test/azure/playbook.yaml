@@ -5,7 +5,7 @@
   tasks:
   - name: Create Azure Deploy
     azure_rm_deployment:
-      resource_group: AzureAnsibleResourceGroup
+      resource_group: AzureAnsibleResourceGroup1
       location: eastus
       name: AzureAnsibleInfra
       parameters:
@@ -59,6 +59,8 @@
       ansible_user: "ubuntu"
       ansible_ssh_private_key_file: "/Users/jefff/.ssh/ansible-priv.pem"
       ansible_host: "{{ azureDeployment.deployment.outputs.lbIp.value }}"
+      db_url: "jdbc:postgresql://{{ azureDeployment.deployment.outputs.vmDbArrIp.value[0] }}:5432/artifactory"
+      server_name: "rt.{{ azureDeployment.deployment.outputs.lbIp.value }}.xip.io"
       artifactory_is_primary: false
       groups:
       - artifactory
@@ -95,6 +97,10 @@
         - { db_name: "xraydb", db_owner: "xray" }
       groups: database
     loop: "{{ azureDeployment.deployment.outputs.vmDbArrIp.value }}"
+
+  # wait for deployment to complete
+  - pause:
+      minutes: 2
 
 - hosts: database
   roles:

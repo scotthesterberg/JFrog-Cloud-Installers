@@ -3,7 +3,7 @@
   pkgng:
     name: "{{ java_packages }}"
     state: present
-  become: true
+  become: yes
 
 - name: ensure proc is mounted
   mount: name=/proc fstype=procfs src=proc opts=rw state=mounted
