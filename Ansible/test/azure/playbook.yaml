@@ -1,11 +1,10 @@
 ---
 - name: Azure Infra Provision
   hosts: localhost
-  connection: local
   tasks:
   - name: Create Azure Deploy
     azure_rm_deployment:
-      resource_group: AzureAnsibleResourceGroup1
+      resource_group: AzureAnsibleResourceGroup
       location: eastus
       name: AzureAnsibleInfra
       parameters:
@@ -36,12 +35,14 @@
   - name: azure deployment details
     debug:
       var: azureDeployment
+  - name: Copy private key to bastion
+    shell: "scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i ~/.ssh/ansible-priv.pem ~/.ssh/ansible-priv.pem ubuntu@{{ azureDeployment.deployment.outputs.lbIp.value }}:.ssh/ansible-priv.pem"
   - name: Add new RT primary to host group
     add_host:
       hostname: "{{ azureDeployment.deployment.outputs.vmArtPriIp.value }}"
       ansible_user: "ubuntu"
-      ansible_ssh_private_key_file: "/Users/jefff/.ssh/ansible-priv.pem"
-      ansible_host: "{{ azureDeployment.deployment.outputs.lbIp.value }}"
+      ansible_ssh_private_key_file: "~/.ssh/ansible-priv.pem"
+      ansible_ssh_common_args: '-o ProxyCommand="ssh -o StrictHostKeyChecking=no -i ~/.ssh/ansible-priv.pem -W %h:%p ubuntu@{{ azureDeployment.deployment.outputs.lbIp.value }}"'
       db_url: "jdbc:postgresql://{{ azureDeployment.deployment.outputs.vmDbArrIp.value[0] }}:5432/artifactory"
       server_name: "rt.{{ azureDeployment.deployment.outputs.lbIp.value }}.xip.io"
       artifactory_is_primary: true
@@ -57,8 +58,8 @@
     add_host:
       hostname: "{{ item }}"
       ansible_user: "ubuntu"
-      ansible_ssh_private_key_file: "/Users/jefff/.ssh/ansible-priv.pem"
-      ansible_host: "{{ azureDeployment.deployment.outputs.lbIp.value }}"
+      ansible_ssh_private_key_file: "~/.ssh/ansible-priv.pem"
+      ansible_ssh_common_args: '-o ProxyCommand="ssh -o StrictHostKeyChecking=no -i ~/.ssh/ansible-priv.pem -W %h:%p ubuntu@{{ azureDeployment.deployment.outputs.lbIp.value }}"'
       db_url: "jdbc:postgresql://{{ azureDeployment.deployment.outputs.vmDbArrIp.value[0] }}:5432/artifactory"
       server_name: "rt.{{ azureDeployment.deployment.outputs.lbIp.value }}.xip.io"
       artifactory_is_primary: false
@@ -70,8 +71,8 @@
     add_host:
       hostname: "{{ item }}"
       ansible_user: "ubuntu"
-      ansible_ssh_private_key_file: "/Users/jefff/.ssh/ansible-priv.pem"
-      ansible_host: "{{ azureDeployment.deployment.outputs.lbIp.value }}"
+      ansible_ssh_private_key_file: "~/.ssh/ansible-priv.pem"
+      ansible_ssh_common_args: '-o ProxyCommand="ssh -o StrictHostKeyChecking=no -i ~/.ssh/ansible-priv.pem -W %h:%p ubuntu@{{ azureDeployment.deployment.outputs.lbIp.value }}"'
       jfrog_url: "http://rt.{{ azureDeployment.deployment.outputs.lbIp.value }}.xip.io"
       master_key: "{{ lookup('env', 'master_key') }}"
       join_key: "{{ lookup('env', 'join_key') }}"
@@ -87,8 +88,8 @@
     add_host:
       hostname: "{{ item }}"
       ansible_user: "ubuntu"
-      ansible_ssh_private_key_file: "/Users/jefff/.ssh/ansible-priv.pem"
-      ansible_host: "{{ azureDeployment.deployment.outputs.lbIp.value }}"
+      ansible_ssh_private_key_file: "~/.ssh/ansible-priv.pem"
+      ansible_ssh_common_args: '-o ProxyCommand="ssh -o StrictHostKeyChecking=no -i ~/.ssh/ansible-priv.pem -W %h:%p ubuntu@{{ azureDeployment.deployment.outputs.lbIp.value }}"'
       db_users:
         - { db_user: "artifactory", db_password: "Art1fAct0ry" }
         - { db_user: "xray", db_password: "xray" }
@@ -97,6 +98,8 @@
         - { db_name: "xraydb", db_owner: "xray" }
       groups: database
     loop: "{{ azureDeployment.deployment.outputs.vmDbArrIp.value }}"
+  - debug:
+      msg: "Unified URL is at http://rt.{{ azureDeployment.deployment.outputs.lbIp.value }}.xip.io"
 
 - hosts: database
   roles:
