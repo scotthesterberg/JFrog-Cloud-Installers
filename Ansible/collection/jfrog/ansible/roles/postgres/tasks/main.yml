@@ -2,18 +2,6 @@
 - name: define distribution-specific variables
   include_vars: "{{ ansible_os_family }}.yml"
 
-#- name: define postgres version-specific variables
-#  include_vars: "{{ lookup('first_found', params) }}"
-#  vars:
-#    params:
-#      files:
-#        - "{{ ansible_os_family }}_pg-{{ postgres_server_version }}.yml"
-#        - "{{ ansible_os_family }}_pg-default.yml"
-#      paths:
-#        - "vars"
-#      skip: true
-#  ignore_errors: true
-
 - name: create directory for bind mount if necessary
   file:
     path: "{{ postgres_server_bind_mount_var_lib_pgsql_target }}"
@@ -108,3 +96,6 @@
     name: "{{ postgres_server_service_name }}"
     state: restarted
   become: yes
+
+- debug:
+    msg: "Restarted postgres service {{ postgres_server_service_name }}"

@@ -98,10 +98,6 @@
       groups: database
     loop: "{{ azureDeployment.deployment.outputs.vmDbArrIp.value }}"
 
-  # wait for deployment to complete
-  - pause:
-      minutes: 2
-
 - hosts: database
   roles:
   - postgres
