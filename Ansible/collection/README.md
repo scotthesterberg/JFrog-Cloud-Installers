@@ -1,4 +1,4 @@
-# ansible
+# Ansible
 This repo contains the Ansible collection for JFrog roles. These roles allow you to provision Artifactory for High-Availability using a Primary node and multiple Secondary nodes. Additionally, a Postgresql role is provided for installing an Artifactory Postgresql database.
 
 ## Roles Provided
@@ -16,10 +16,6 @@ The xray role will install Xray software onto the host. An Artifactory server an
 
 ## Vars Required
 The following Vars must be configured.
-
-### all vars
-* ansible_user: The SSH user to access the hosts. eg. "ubuntu"
-* ansible_ssh_private_key_file: The SSH key to use. eg. "/Users/jefff/.ssh/jeff-ec2-us-east.pem"
 
 ### databsase vars
 * db_users: This is a list of database users to create. eg. db_users: - { db_user: "artifactory", db_password: "Art1fAct0ry" }
@@ -58,8 +54,6 @@ The following Vars must be configured.
 * db_url: This is the database url. eg. "postgres://10.0.0.59:5432/xraydb?sslmode=disable"
 * db_user: The database user to configure. eg. "xray"
 * db_password: The database password to configure. "xray"
-
-### xray vars
 
 ## Example Inventory and Playbooks
 Example playbooks are located in the [example-playbooks](example-playbooks) directory. This directory contains several example inventory and plaaybooks for different Artifactory, HA and Xray architectures.
