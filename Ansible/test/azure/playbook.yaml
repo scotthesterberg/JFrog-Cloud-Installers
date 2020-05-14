@@ -16,8 +16,6 @@
           value: "10.0.0.0/24"
         location:
           value: "eastus"
-        adminUsername:
-          value: "{{ lookup('env', 'admin_username') }}"
         adminPassword:
           value: "{{ lookup('env', 'admin_password') }}"
         adminPublicKey:
@@ -40,9 +38,9 @@
   - name: Add new RT primary to host group
     add_host:
       hostname: "{{ azureDeployment.deployment.outputs.vmArtPriIp.value }}"
-      ansible_user: "{{ lookup('env', 'admin_username') }}"
+      ansible_user: "ubuntu"
       ansible_password: "{{ lookup('env', 'admin_password') }}"
-      ansible_ssh_common_args: '-o ProxyCommand="ssh -o StrictHostKeyChecking=no -W %h:%p "{{ lookup('env', 'admin_username') }}"@{{ azureDeployment.deployment.outputs.lbIp.value }}"'
+      ansible_ssh_common_args: '-o ProxyCommand="ssh -o StrictHostKeyChecking=no -i ~/.ssh/ansible-priv.pem -W %h:%p ubuntu@{{ azureDeployment.deployment.outputs.lbIp.value }}"'
       db_url: "jdbc:postgresql://{{ azureDeployment.deployment.outputs.vmDbArrIp.value[0] }}:5432/artifactory"
       server_name: "rt.{{ azureDeployment.deployment.outputs.lbIp.value }}.xip.io"
       artifactory_is_primary: true
@@ -57,9 +55,9 @@
   - name: Add RT secondaries to host group
     add_host:
       hostname: "{{ item }}"
-      ansible_user: "{{ lookup('env', 'admin_username') }}"
+      ansible_user: "ubuntu"
       ansible_password: "{{ lookup('env', 'admin_password') }}"
-      ansible_ssh_common_args: '-o ProxyCommand="ssh -o StrictHostKeyChecking=no -W %h:%p {{ lookup('env', 'admin_username') }}@{{ azureDeployment.deployment.outputs.lbIp.value }}"'
+      ansible_ssh_common_args: '-o ProxyCommand="ssh -o StrictHostKeyChecking=no -i ~/.ssh/ansible-priv.pem -W %h:%p ubuntu@{{ azureDeployment.deployment.outputs.lbIp.value }}"'
       db_url: "jdbc:postgresql://{{ azureDeployment.deployment.outputs.vmDbArrIp.value[0] }}:5432/artifactory"
       server_name: "rt.{{ azureDeployment.deployment.outputs.lbIp.value }}.xip.io"
       artifactory_is_primary: false
@@ -70,9 +68,9 @@
   - name: Add xrays to host group
     add_host:
       hostname: "{{ item }}"
-      ansible_user: "{{ lookup('env', 'admin_username') }}"
+      ansible_user: "ubuntu"
       ansible_password: "{{ lookup('env', 'admin_password') }}"
-      ansible_ssh_common_args: '-o ProxyCommand="ssh -o StrictHostKeyChecking=no -W %h:%p {{ lookup('env', 'admin_username') }}@{{ azureDeployment.deployment.outputs.lbIp.value }}"'
+      ansible_ssh_common_args: '-o ProxyCommand="ssh -o StrictHostKeyChecking=no -i ~/.ssh/ansible-priv.pem -W %h:%p ubuntu@{{ azureDeployment.deployment.outputs.lbIp.value }}"'
       jfrog_url: "http://rt.{{ azureDeployment.deployment.outputs.lbIp.value }}.xip.io"
       master_key: "{{ lookup('env', 'master_key') }}"
       join_key: "{{ lookup('env', 'join_key') }}"
@@ -87,9 +85,9 @@
   - name: Add DBs to host group
     add_host:
       hostname: "{{ item }}"
-      ansible_user: "{{ lookup('env', 'admin_username') }}"
+      ansible_user: "ubuntu"
       ansible_password: "{{ lookup('env', 'admin_password') }}"
-      ansible_ssh_common_args: '-o ProxyCommand="ssh -o StrictHostKeyChecking=no -W %h:%p {{ lookup('env', 'admin_username') }}@{{ azureDeployment.deployment.outputs.lbIp.value }}"'
+      ansible_ssh_common_args: '-o ProxyCommand="ssh -o StrictHostKeyChecking=no -i ~/.ssh/ansible-priv.pem -W %h:%p ubuntu@{{ azureDeployment.deployment.outputs.lbIp.value }}"'
       db_users:
         - { db_user: "artifactory", db_password: "Art1fAct0ry" }
         - { db_user: "xray", db_password: "xray" }

@@ -30,17 +30,10 @@
         "description": "Location for all resources."
       }
     },
-    "adminUsername": {
-      "type": "string",
-      "defaultValue": "ubuntu",
-      "metadata": {
-        "description": "Specifies the SSH username for the VMs."
-      }
-    },
     "adminPassword": {
       "type": "securestring",
       "metadata": {
-        "description": "Specifies the password for the private VMs. (The bastion uses the SSH key pair)."
+        "description": "Specifies the ubuntu user password for the private VMs. (The bastion uses the SSH key pair)."
       }
     },
     "adminPublicKey": {
@@ -113,7 +106,8 @@
     "imagePublisher": "Canonical",
     "imageOffer": "UbuntuServer",
     "imageSku": "16.04-LTS",
-    "mainNsg": "mainNsg"
+    "mainNsg": "mainNsg",
+    "adminUsername": "ubuntu"
   },
   "resources": [
     {
@@ -493,7 +487,7 @@
         },
         "osProfile": {
           "computerName": "[concat(variables('vmArtSec'), copyindex())]",
-          "adminUsername": "[parameters('adminUsername')]",
+          "adminUsername": "[variables('adminUsername')]",
           "adminPassword": "[parameters('adminPassword')]"
         },
         "storageProfile": {
@@ -545,7 +539,7 @@
         },
         "osProfile": {
           "computerName": "[concat(variables('vmXray'), copyindex())]",
-          "adminUsername": "[parameters('adminUsername')]",
+          "adminUsername": "[variables('adminUsername')]",
           "adminPassword": "[parameters('adminPassword')]"
         },
         "storageProfile": {
@@ -597,7 +591,7 @@
         },
         "osProfile": {
           "computerName": "[concat(variables('vmDb'), copyindex())]",
-          "adminUsername": "[parameters('adminUsername')]",
+          "adminUsername": "[variables('adminUsername')]",
           "adminPassword": "[parameters('adminPassword')]"
         },
         "storageProfile": {
