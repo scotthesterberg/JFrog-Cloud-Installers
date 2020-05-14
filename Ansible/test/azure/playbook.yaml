@@ -4,7 +4,7 @@
   tasks:
   - name: Create Azure Deploy
     azure_rm_deployment:
-      resource_group: AzureAnsibleResourceGroup
+      resource_group: AzureAnsibleResourceGroup1
       location: eastus
       name: AzureAnsibleInfra
       parameters:

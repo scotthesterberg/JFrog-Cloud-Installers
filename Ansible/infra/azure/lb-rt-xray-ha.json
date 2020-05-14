@@ -425,13 +425,13 @@
         },
         "osProfile": {
           "computerName": "[variables('vmArtPri')]",
-          "adminUsername": "[parameters('adminUsername')]",
+          "adminUsername": "[variables('adminUsername')]",
           "linuxConfiguration": {
             "disablePasswordAuthentication": true,
             "ssh": {
               "publicKeys": [
                 {
-                  "path": "[concat('/home/', parameters('adminUsername'), '/.ssh/authorized_keys')]",
+                  "path": "[concat('/home/', variables('adminUsername'), '/.ssh/authorized_keys')]",
                   "keyData": "[parameters('adminPublicKey')]"
                 }
               ]
