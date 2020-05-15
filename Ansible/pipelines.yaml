@@ -1,2 +1,33 @@
 resources:
-  -
+  - name: jfrogAnsibleRepo
+    type: GitRepo
+    configuration:
+      gitProvider: jefferyfryGithub
+      path: jfrog/JFrog-Cloud-Installers/tree/ansible-rt7/Ansible
+pipelines:
+  - name: ansible_azure_automation_pipeline
+    steps:
+      - name: execute_azure_ansible_playbook
+        type: Bash
+        configuration:
+          environmentVariables:
+            artifactory_license1: int_partner_eng_ansible_env_vars_artifactory_license1
+            artifactory_license2: int_partner_eng_ansible_env_vars_artifactory_license2
+            artifactory_license3: int_partner_eng_ansible_env_vars_artifactory_license3
+            artifactory_license4: int_partner_eng_ansible_env_vars_artifactory_license4
+            artifactory_license5: int_partner_eng_ansible_env_vars_artifactory_license5
+            master_key: int_partner_eng_ansible_env_vars_master_key
+            join_key: int_partner_eng_ansible_env_vars_join_key
+            ssh_public_key: int_partner_eng_ansible_env_vars_ssh_public_key
+            arm_template: int_partner_eng_ansible_env_vars_arm_template
+          integrations:
+          - name: partner_eng_ansible_env_vars
+          - name: partner_eng_ansible_priv_key
+          - name: partner_engineering_ansible_jfrog_collection
+        execution:
+          onStart:
+            - echo "Executing Azure Ansible playbook..."
+          onExecute:
+            - test/azure/runAzurePlaybook.sh
+          onComplete:
+            - echo "Azure Ansible playbook complete."

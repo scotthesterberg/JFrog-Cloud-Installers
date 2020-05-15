@@ -4,7 +4,7 @@
   tasks:
   - name: Create azure test system
     azure_rm_deployment:
-      resource_group: AzureAnsibleResourceGroup
+      resource_group: "{{ lookup('env', 'azure_resource_group') }}"
       location: eastus
       name: AzureAnsibleInfra
       parameters:
