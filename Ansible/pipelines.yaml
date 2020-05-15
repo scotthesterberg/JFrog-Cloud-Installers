@@ -1,5 +1,5 @@
 resources:
-  - name: jfrogAnsibleRepo
+  - name: ansibleRepo
     type: GitRepo
     configuration:
       gitProvider: jefferyfryGithub
@@ -10,6 +10,12 @@ pipelines:
       - name: execute_azure_ansible_playbook
         type: Bash
         configuration:
+          runtime:
+            type: image
+            image:
+              custom:
+                name: cytopia/ansible
+                tag: latest-azure
           environmentVariables:
             artifactory_license1: int_partner_eng_ansible_env_vars_artifactory_license1
             artifactory_license2: int_partner_eng_ansible_env_vars_artifactory_license2
