@@ -3,7 +3,7 @@ resources:
     type: GitRepo
     configuration:
       gitProvider: jefferyfryGithub
-      path: jefferyfry/JFrog-Cloud-Installers/tree/ansible-rt7/Ansible
+      path: jfrog/JFrog-Cloud-Installers
 pipelines:
   - name: ansible_azure_automation_pipeline
     steps:
