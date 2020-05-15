@@ -4,7 +4,7 @@
   tasks:
   - name: Create Azure Deploy
     azure_rm_deployment:
-      resource_group: AzureAnsibleResourceGroup1
+      resource_group: AzureAnsibleResourceGroup
       location: eastus
       name: AzureAnsibleInfra
       parameters:
@@ -16,8 +16,6 @@
           value: "10.0.0.0/24"
         location:
           value: "eastus"
-        adminPassword:
-          value: "{{ lookup('env', 'admin_password') }}"
         adminPublicKey:
           value: "{{ lookup('env', 'ssh_public_key') }}"
         sizeOfDiskInGB:
@@ -35,11 +33,16 @@
   - name: azure deployment details
     debug:
       var: azureDeployment
+
+  - name: Add bastion
+    add_host:
+      hostname: "{{ azureDeployment.deployment.outputs.lbIp.value }}"
+      groups: bastion
+      ansible_user: "ubuntu"
   - name: Add new RT primary to host group
     add_host:
       hostname: "{{ azureDeployment.deployment.outputs.vmArtPriIp.value }}"
       ansible_user: "ubuntu"
-      ansible_password: "{{ lookup('env', 'admin_password') }}"
       ansible_ssh_common_args: '-o ProxyCommand="ssh -o StrictHostKeyChecking=no -i ~/.ssh/ansible-priv.pem -W %h:%p ubuntu@{{ azureDeployment.deployment.outputs.lbIp.value }}"'
       db_url: "jdbc:postgresql://{{ azureDeployment.deployment.outputs.vmDbArrIp.value[0] }}:5432/artifactory"
       server_name: "rt.{{ azureDeployment.deployment.outputs.lbIp.value }}.xip.io"
@@ -56,7 +59,6 @@
     add_host:
       hostname: "{{ item }}"
       ansible_user: "ubuntu"
-      ansible_password: "{{ lookup('env', 'admin_password') }}"
       ansible_ssh_common_args: '-o ProxyCommand="ssh -o StrictHostKeyChecking=no -i ~/.ssh/ansible-priv.pem -W %h:%p ubuntu@{{ azureDeployment.deployment.outputs.lbIp.value }}"'
       db_url: "jdbc:postgresql://{{ azureDeployment.deployment.outputs.vmDbArrIp.value[0] }}:5432/artifactory"
       server_name: "rt.{{ azureDeployment.deployment.outputs.lbIp.value }}.xip.io"
@@ -69,7 +71,6 @@
     add_host:
       hostname: "{{ item }}"
       ansible_user: "ubuntu"
-      ansible_password: "{{ lookup('env', 'admin_password') }}"
       ansible_ssh_common_args: '-o ProxyCommand="ssh -o StrictHostKeyChecking=no -i ~/.ssh/ansible-priv.pem -W %h:%p ubuntu@{{ azureDeployment.deployment.outputs.lbIp.value }}"'
       jfrog_url: "http://rt.{{ azureDeployment.deployment.outputs.lbIp.value }}.xip.io"
       master_key: "{{ lookup('env', 'master_key') }}"
@@ -86,7 +87,6 @@
     add_host:
       hostname: "{{ item }}"
       ansible_user: "ubuntu"
-      ansible_password: "{{ lookup('env', 'admin_password') }}"
       ansible_ssh_common_args: '-o ProxyCommand="ssh -o StrictHostKeyChecking=no -i ~/.ssh/ansible-priv.pem -W %h:%p ubuntu@{{ azureDeployment.deployment.outputs.lbIp.value }}"'
       db_users:
         - { db_user: "artifactory", db_password: "Art1fAct0ry" }
