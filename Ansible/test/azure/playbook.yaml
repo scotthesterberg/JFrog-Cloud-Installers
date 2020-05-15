@@ -1,8 +1,8 @@
 ---
-- name: Azure Infra Provision
+- name: Provision Azure test infrastructure
   hosts: localhost
   tasks:
-  - name: Create Azure Deploy
+  - name: Create azure test system
     azure_rm_deployment:
       resource_group: AzureAnsibleResourceGroup
       location: eastus
@@ -28,9 +28,9 @@
           value: 1
         numberOfDb:
           value: 1
-      template_link: 'https://raw.githubusercontent.com/jfrog/JFrog-Cloud-Installers/ansible-rt7/Ansible/infra/azure/lb-rt-xray-ha.json'
+      template_link: "{{ lookup('env', 'arm_template') }}"
     register: azureDeployment
-  - name: azure deployment details
+  - name: Get Azure deployment details
     debug:
       var: azureDeployment
 
@@ -43,7 +43,7 @@
     add_host:
       hostname: "{{ azureDeployment.deployment.outputs.vmArtPriIp.value }}"
       ansible_user: "ubuntu"
-      ansible_ssh_common_args: '-o ProxyCommand="ssh -o StrictHostKeyChecking=no -i ~/.ssh/ansible-priv.pem -W %h:%p ubuntu@{{ azureDeployment.deployment.outputs.lbIp.value }}"'
+      ansible_ssh_common_args: '-o ProxyCommand="ssh -o StrictHostKeyChecking=no -A ubuntu@{{ azureDeployment.deployment.outputs.lbIp.value }} -W %h:%p"'
       db_url: "jdbc:postgresql://{{ azureDeployment.deployment.outputs.vmDbArrIp.value[0] }}:5432/artifactory"
       server_name: "rt.{{ azureDeployment.deployment.outputs.lbIp.value }}.xip.io"
       artifactory_is_primary: true
@@ -59,7 +59,7 @@
     add_host:
       hostname: "{{ item }}"
       ansible_user: "ubuntu"
-      ansible_ssh_common_args: '-o ProxyCommand="ssh -o StrictHostKeyChecking=no -i ~/.ssh/ansible-priv.pem -W %h:%p ubuntu@{{ azureDeployment.deployment.outputs.lbIp.value }}"'
+      ansible_ssh_common_args: '-o ProxyCommand="ssh -o StrictHostKeyChecking=no -A ubuntu@{{ azureDeployment.deployment.outputs.lbIp.value }} -W %h:%p"'
       db_url: "jdbc:postgresql://{{ azureDeployment.deployment.outputs.vmDbArrIp.value[0] }}:5432/artifactory"
       server_name: "rt.{{ azureDeployment.deployment.outputs.lbIp.value }}.xip.io"
       artifactory_is_primary: false
@@ -71,7 +71,7 @@
     add_host:
       hostname: "{{ item }}"
       ansible_user: "ubuntu"
-      ansible_ssh_common_args: '-o ProxyCommand="ssh -o StrictHostKeyChecking=no -i ~/.ssh/ansible-priv.pem -W %h:%p ubuntu@{{ azureDeployment.deployment.outputs.lbIp.value }}"'
+      ansible_ssh_common_args: '-o ProxyCommand="ssh -o StrictHostKeyChecking=no -A ubuntu@{{ azureDeployment.deployment.outputs.lbIp.value }} -W %h:%p"'
       jfrog_url: "http://rt.{{ azureDeployment.deployment.outputs.lbIp.value }}.xip.io"
       master_key: "{{ lookup('env', 'master_key') }}"
       join_key: "{{ lookup('env', 'join_key') }}"
@@ -87,7 +87,7 @@
     add_host:
       hostname: "{{ item }}"
       ansible_user: "ubuntu"
-      ansible_ssh_common_args: '-o ProxyCommand="ssh -o StrictHostKeyChecking=no -i ~/.ssh/ansible-priv.pem -W %h:%p ubuntu@{{ azureDeployment.deployment.outputs.lbIp.value }}"'
+      ansible_ssh_common_args: '-o ProxyCommand="ssh -o StrictHostKeyChecking=no -A ubuntu@{{ azureDeployment.deployment.outputs.lbIp.value }} -W %h:%p"'
       db_users:
         - { db_user: "artifactory", db_password: "Art1fAct0ry" }
         - { db_user: "xray", db_password: "xray" }
