@@ -120,6 +120,12 @@
     with_file:
       - ../tests/src/test/resources/testenv.yaml
 
+  - name: Wait 300 seconds for port 22
+    wait_for:
+      port: 22
+      host: "{{ azureDeployment.deployment.outputs.lbIp.value }}"
+      delay: 10
+
   - debug:
       msg: "Unified URL is at http://rt.{{ azureDeployment.deployment.outputs.lbIp.value }}.xip.io"
 
@@ -144,10 +150,10 @@
   roles:
   - xray
 
-#- name: Test
-#  hosts: localhost
-#  tasks:
-#  - name: Run tests
-#    shell:
-#      cmd: ./gradlew clean unified_test
-#      chdir: ../tests/
+- name: Test
+  hosts: localhost
+  tasks:
+  - name: Run tests
+    shell:
+      cmd: ./gradlew clean unified_test
+      chdir: ../tests/
