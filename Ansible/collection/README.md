@@ -70,10 +70,10 @@ eg.
 In many cases, you may want to run this Ansible collection through a Bastion host to provision JFrog servers. You can include the following Var for a host or group of hosts:
 
 ```
-ansible_ssh_common_args: 'ssh -o StrictHostKeyChecking=no -A user@host -W %h:%p"'
+ansible_ssh_common_args: '"ssh -o StrictHostKeyChecking=no -A user@host -W %h:%p"'
 
 eg.
-ansible_ssh_common_args: 'ssh -o StrictHostKeyChecking=no -A ubuntu@{{ azureDeployment.deployment.outputs.lbIp.value }} -W %h:%p"'
+ansible_ssh_common_args: '"ssh -o StrictHostKeyChecking=no -A ubuntu@{{ azureDeployment.deployment.outputs.lbIp.value }} -W %h:%p"'
 ```
 
 
