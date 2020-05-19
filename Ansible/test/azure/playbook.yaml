@@ -96,6 +96,30 @@
         - { db_name: "xraydb", db_owner: "xray" }
       groups: database
     loop: "{{ azureDeployment.deployment.outputs.vmDbArrIp.value }}"
+
+  - name: Set up test environment url
+    replace:
+      path: ../tests/src/test/resources/testenv.yaml
+      regexp: 'urlval'
+      replace: "http://rt.{{ azureDeployment.deployment.outputs.lbIp.value }}.xip.io"
+
+  - name: Set up test environment external_ip
+    replace:
+      path: ../tests/src/test/resources/testenv.yaml
+      regexp: 'ipval'
+      replace: "{{ azureDeployment.deployment.outputs.lbIp.value }}"
+
+  - name: Set up test environment rt_password
+    replace:
+      path: ../tests/src/test/resources/testenv.yaml
+      regexp: 'passval'
+      replace: "password"
+
+  - name: show testenv.yaml
+    debug: var=item
+    with_file:
+      - ../tests/src/test/resources/testenv.yaml
+
   - debug:
       msg: "Unified URL is at http://rt.{{ azureDeployment.deployment.outputs.lbIp.value }}.xip.io"
 
@@ -119,3 +143,11 @@
 - hosts: xray
   roles:
   - xray
+
+#- name: Test
+#  hosts: localhost
+#  tasks:
+#  - name: Run tests
+#    shell:
+#      cmd: ./gradlew clean unified_test
+#      chdir: ../tests/

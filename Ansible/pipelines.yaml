@@ -3,7 +3,7 @@ resources:
     type: GitRepo
     configuration:
       gitProvider: jefferyfryGithub
-      path: jfrog/JFrog-Cloud-Installers
+      path: jefferyfry/JFrog-Cloud-Installers
 pipelines:
   - name: ansible_azure_automation_pipeline
     steps:
@@ -13,9 +13,10 @@ pipelines:
           runtime:
             type: image
             image:
-              custom:
-                name: cytopia/ansible
-                tag: latest-azure
+              auto:
+                language: java
+                versions:
+                  - "8"
           environmentVariables:
             artifactory_license1: int_partner_eng_ansible_env_vars_artifactory_license1
             artifactory_license2: int_partner_eng_ansible_env_vars_artifactory_license2
@@ -27,13 +28,42 @@ pipelines:
             ssh_public_key: int_partner_eng_ansible_env_vars_ssh_public_key
             arm_template: int_partner_eng_ansible_env_vars_arm_template
           integrations:
-          - name: partner_eng_ansible_env_vars
-          - name: partner_eng_ansible_priv_key
-          - name: partner_engineering_ansible_jfrog_collection
+            - name: ansibleAzureKeys
+            - name: ansibleEnvVars
+            - name: ansiblePrivateKey
+          inputResources:
+            - name: ansibleRepo
         execution:
           onStart:
             - echo "Executing Azure Ansible playbook..."
           onExecute:
-            - test/azure/runAzurePlaybook.sh
+            - sudo apt-get update
+            - sudo apt-get install gnupg2
+            - sudo apt-get install software-properties-common
+            - sudo apt-add-repository --yes --update ppa:ansible/ansible
+            - sudo apt -y --allow-unauthenticated install ansible
+            - sudo pip install packaging
+            - sudo pip install msrestazure
+            - sudo pip install ansible[azure]
+            - cd ../dependencyState/resources/ansibleRepo
+            - echo 'Setting environment variables...'
+            - export artifactory_license1="$int_ansibleEnvVars_artifactory_license1"
+            - export artifactory_license2="$int_ansibleEnvVars_artifactory_license2"
+            - export artifactory_license3="$int_ansibleEnvVars_artifactory_license3"
+            - export artifactory_license4="$int_ansibleEnvVars_artifactory_license4"
+            - export artifactory_license5="$int_ansibleEnvVars_artifactory_license5"
+            - export master_key="$int_ansibleEnvVars_master_key"
+            - export join_key="$int_ansibleEnvVars_join_key"
+            - export ssh_public_key="$int_ansibleEnvVars_ssh_public_key"
+            - export arm_template="$int_ansibleEnvVars_arm_template"
+            - export azure_resource_group="$int_ansibleEnvVars_azure_resource_group"
+            - export clientId="$int_ansibleAzureKeys_appId"
+            - export clientSecret="$int_ansibleAzureKeys_password"
+            - export tenantId="$int_ansibleAzureKeys_tenant"
+            - printenv
+            - eval $(ssh-agent -s)
+            - ssh-add <(echo "$int_ansiblePrivateKey_key")
+            - az login --service-principal -u "$clientId" -p "$clientSecret" --tenant "$tenantId"
+            - ansible-playbook Ansible/test/azure/playbook.yaml
           onComplete:
             - echo "Azure Ansible playbook complete."

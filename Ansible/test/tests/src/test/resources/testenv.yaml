@@ -1,0 +1,6 @@
+artifactory:
+  url: http://rt.13.92.177.11.xip.io
+  external_ip: 13.92.177.11
+  distribution: artifactory_ha
+  rt_username: admin
+  rt_password: password

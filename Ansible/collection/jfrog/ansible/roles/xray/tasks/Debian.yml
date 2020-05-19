@@ -2,11 +2,13 @@
 - name: Install db5.3-util
   apt:
     deb: "{{ xray_home }}/app/third-party/misc/db5.3-util_5.3.28-3ubuntu3_amd64.deb"
+  ignore_errors: yes
   become: yes
 
 - name: Install db-util
   apt:
     deb: "{{ xray_home }}/app/third-party/misc/db-util_1_3a5.3.21exp1ubuntu1_all.deb"
+  ignore_errors: yes
   become: yes
 
 - name: Install libssl
