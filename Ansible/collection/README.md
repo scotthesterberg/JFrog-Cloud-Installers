@@ -56,7 +56,7 @@ The following Vars must be configured.
 * db_password: The database password to configure. "xray"
 
 ## Example Inventory and Playbooks
-Example playbooks are located in the [example-playbooks](example-playbooks) directory. This directory contains several example inventory and plaaybooks for different Artifactory, HA and Xray architectures.
+Example playbooks are located in the [project](../project) directory. This directory contains several example inventory and plaaybooks for different Artifactory, HA and Xray architectures.
 
 ## Executing a Playbook
 ```
@@ -75,5 +75,3 @@ ansible_ssh_common_args: '-o ProxyCommand="ssh -o StrictHostKeyChecking=no -A us
 eg.
 ansible_ssh_common_args: '-o ProxyCommand="ssh -o StrictHostKeyChecking=no -A ubuntu@{{ azureDeployment.deployment.outputs.lbIp.value }} -W %h:%p"'
 ```
-
-
