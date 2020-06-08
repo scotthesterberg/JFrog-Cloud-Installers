@@ -58,6 +58,7 @@
       "defaultValue": "Disabled"
     },
     "databases": {
+      "type":"object",
       "value": {
         "properties": [
           {
