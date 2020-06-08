@@ -720,6 +720,23 @@
           },
           "db_location": {
             "value": "[variables('db_location')]"
+          },
+          "databases": {
+            "type": "object",
+            "value": {
+              "properties": [
+                {
+                  "name": "artdb",
+                  "charset": "UTF8",
+                  "collation": "English_United States.1252"
+                },
+                {
+                  "name": "xraydb",
+                  "charset": "UTF8",
+                  "collation": "English_United States.1252"
+                }
+              ]
+            }
           }
         }
       }
