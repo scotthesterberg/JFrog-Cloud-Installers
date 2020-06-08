@@ -104,9 +104,9 @@
         {
           "type": "Microsoft.DBforPostgreSQL/servers/databases",
           "apiversion": "2017-12-01",
-          "name": "[concat(parameters('serverName'), '/', parameters('databases').properties[0].name)]",
+          "name": "[concat(parameters('db_server'), '/', parameters('databases').properties[0].name)]",
           "dependsOn": [
-            "[resourceId('Microsoft.DBforPostgreSQL/servers', parameters('serverName'))]"
+            "[resourceId('Microsoft.DBforPostgreSQL/servers', parameters('db_server'))]"
           ],
           "properties": {
             "charset": "[parameters('databases').properties[0].charset]",
@@ -116,9 +116,9 @@
         {
           "type": "Microsoft.DBforPostgreSQL/servers/databases",
           "apiversion": "2017-12-01",
-          "name": "[concat(parameters('serverName'), '/', parameters('databases').properties[1].name)]",
+          "name": "[concat(parameters('db_server'), '/', parameters('databases').properties[1].name)]",
           "dependsOn": [
-            "[resourceId('Microsoft.DBforPostgreSQL/servers', parameters('serverName'))]"
+            "[resourceId('Microsoft.DBforPostgreSQL/servers', parameters('db_server'))]"
           ],
           "properties": {
             "charset": "[parameters('databases').properties[1].charset]",
