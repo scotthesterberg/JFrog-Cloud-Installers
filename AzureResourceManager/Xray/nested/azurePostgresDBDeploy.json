@@ -135,7 +135,7 @@
     },
     "xrayConnString": {
       "type": "string",
-      "value": "[concat('postgres://', reference(concat('Microsoft.DBforPostgreSQL/servers/', parameters('db_server'))).fullyQualifiedDomainName, ':5432/', parameters('databases').properties[1].name))]"
+      "value": "[concat('postgres://', reference(concat('Microsoft.DBforPostgreSQL/servers/', parameters('db_server'))).fullyQualifiedDomainName, ':5432/')]"
     }
   }
 }
