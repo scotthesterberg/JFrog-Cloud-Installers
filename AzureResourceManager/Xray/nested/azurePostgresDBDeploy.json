@@ -91,7 +91,7 @@
         {
           "name": "[uniqueString(parameters('db_server'), 'AllowAllWindowsAzureIps' )]",
           "type": "firewallRules",
-          "apiVersion": "2017-12-01",
+          "apiVersion": "2019-06-01-preview",
           "location": "[variables('db_location')]",
           "dependsOn": [
             "[resourceId('Microsoft.DBforPostgreSQL/servers', parameters('db_server'))]"
@@ -116,7 +116,6 @@
         {
           "type": "Microsoft.DBforPostgreSQL/servers/databases",
           "apiversion": "2017-12-01",
-          "condition": "[greater(length(parameters('databases').properties), 1)]",
           "name": "[concat(parameters('db_server'), '/', parameters('databases').properties[1].name)]",
           "dependsOn": [
             "[resourceId('Microsoft.DBforPostgreSQL/servers', parameters('db_server'))]"
