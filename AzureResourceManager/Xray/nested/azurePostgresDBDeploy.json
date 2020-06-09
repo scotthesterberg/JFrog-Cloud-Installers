@@ -116,6 +116,7 @@
         {
           "type": "Microsoft.DBforPostgreSQL/servers/databases",
           "apiversion": "2017-12-01",
+          "condition": "[greater(length(parameters('databases').properties), 1)]",
           "name": "[concat(parameters('db_server'), '/', parameters('databases').properties[1].name)]",
           "dependsOn": [
             "[resourceId('Microsoft.DBforPostgreSQL/servers', parameters('db_server'))]"
@@ -135,7 +136,7 @@
     },
     "xrayConnString": {
       "type": "string",
-      "value": "[concat('postgres://', reference(concat('Microsoft.DBforPostgreSQL/servers/', parameters('db_server'))).fullyQualifiedDomainName, ':5432/')]"
+      "value": "[concat('postgres://', reference(concat('Microsoft.DBforPostgreSQL/servers/', parameters('db_server'))).fullyQualifiedDomainName, ':5432')]"
     }
   }
 }
