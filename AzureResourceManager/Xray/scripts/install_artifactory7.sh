@@ -169,7 +169,7 @@ cat <<EOF >>/var/opt/jfrog/artifactory/etc/system.yaml
     ## Example for postgresql
       type: postgresql
       driver: org.postgresql.Driver
-      url: jdbc:postgresql://${DB_URL}:5432>/${DB_NAME}?sslmode=disable
+      url: ${DB_URL}/${DB_NAME}?sslmode=disable
       username: ${DB_USER}
       password: ${DB_PASSWORD}
 

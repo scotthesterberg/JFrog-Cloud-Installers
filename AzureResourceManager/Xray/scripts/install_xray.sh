@@ -38,7 +38,7 @@ cat <<EOF >>/var/opt/jfrog/artifactory/etc/system.yaml
     ## Default: Embedded derby
       type: postgresql
       driver: org.postgresql.Driver
-      url: postgres://${DB_URL}/${DB_NAME}?sslmode=disable
+      url: ${DB_URL}/${DB_NAME}?sslmode=disable
       username: ${DB_USER}
       password: ${DB_PASSWORD}
     jfrogUrl: <JFrog URL> # LB IP address? Internal IP?
