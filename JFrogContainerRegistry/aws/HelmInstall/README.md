@@ -36,8 +36,8 @@ To install the chart with the release name `jfrog-container-registry`:
 ```bash
 helm install 
   --name jfrog-container-registry \
-  --set artifactory.artifactory.image.repository=117940112483.dkr.ecr.us-east-1.amazonaws.com/3701884c-2c08-41f3-b4df-84743c6a9f58/cfe17fe1-c3a4-41d6-a008-1abe6a733b7c/partnership-public-images.jfrog.io/aws/artifactory-jcr \
-  --set artifactory.artifactory.image.version=7.4.1-latest \
+  --set artifactory.artifactory.image.repository=117940112483.dkr.ecr.us-east-1.amazonaws.com/3701884c-2c08-41f3-b4df-84743c6a9f58/198bdff5-aed9-4519-acef-83d6485135d4/partnership-public-images.jfrog.io/aws/artifactory-jcr \
+  --set artifactory.artifactory.image.version=7.5.5-latest \
   --set artifactory.postgresql.enabled=false \
   --set artifactory.database.type=postgresql \
   --set artifactory.database.url='jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}' \
@@ -53,8 +53,8 @@ To install the chart with the release name `jfrog-container-registry`:
 ```bash
 helm install 
   --name jfrog-container-registry \
-  --set artifactory.artifactory.image.repository=117940112483.dkr.ecr.us-east-1.amazonaws.com/3701884c-2c08-41f3-b4df-84743c6a9f58/cfe17fe1-c3a4-41d6-a008-1abe6a733b7c/partnership-public-images.jfrog.io/aws/artifactory-jcr \
-  --set artifactory.artifactory.image.version=7.4.1-latest \
+  --set artifactory.artifactory.image.repository=117940112483.dkr.ecr.us-east-1.amazonaws.com/3701884c-2c08-41f3-b4df-84743c6a9f58/198bdff5-aed9-4519-acef-83d6485135d4/partnership-public-images.jfrog.io/aws/artifactory-jcr \
+  --set artifactory.artifactory.image.version=7.5.5-latest \
   --set artifactory.postgresql.enabled=false \
   --set artifactory.database.type=postgresql \
   --set artifactory.database.url='jdbc:postgresql://${DB_HOST}:${DB_PORT}/my-artifactory-db' \
@@ -132,8 +132,8 @@ To install the chart with the release name `jfrog-container-registry`:
 ```bash
 helm install 
   --name jfrog-container-registry \
-  --set artifactory.artifactory.image.repository=117940112483.dkr.ecr.us-east-1.amazonaws.com/3701884c-2c08-41f3-b4df-84743c6a9f58/cfe17fe1-c3a4-41d6-a008-1abe6a733b7c/partnership-public-images.jfrog.io/aws/artifactory-jcr \
-  --set artifactory.artifactory.image.version=7.4.1-latest \
+  --set artifactory.artifactory.image.repository=117940112483.dkr.ecr.us-east-1.amazonaws.com/3701884c-2c08-41f3-b4df-84743c6a9f58/198bdff5-aed9-4519-acef-83d6485135d4/partnership-public-images.jfrog.io/aws/artifactory-jcr \
+  --set artifactory.artifactory.image.version=7.5.5-latest \
   --set artifactory.postgresql.enabled=false \
   --set artifactory.artifactory.preStartCommand="wget -O /opt/jfrog/artifactory/tomcat/lib/mysql-connector-java-5.1.41.jar https://jcenter.bintray.com/mysql/mysql-connector-java/5.1.41/mysql-connector-java-5.1.41.jar" \
   --set artifactory.database.type=mysql \
@@ -196,8 +196,8 @@ Specify each parameter using the `--set key=value[,key=value]` argument to `helm
 To get Helm to create an ingress object with a hostname, add these two lines to your Helm command:
 ```bash
 helm install --name artifactory \
-  --set artifactory.artifactory.image.repository=117940112483.dkr.ecr.us-east-1.amazonaws.com/3701884c-2c08-41f3-b4df-84743c6a9f58/cfe17fe1-c3a4-41d6-a008-1abe6a733b7c/partnership-public-images.jfrog.io/aws/artifactory-jcr \
-  --set artifactory.artifactory.image.version=7.4.1-latest \
+  --set artifactory.artifactory.image.repository=117940112483.dkr.ecr.us-east-1.amazonaws.com/3701884c-2c08-41f3-b4df-84743c6a9f58/198bdff5-aed9-4519-acef-83d6485135d4/partnership-public-images.jfrog.io/aws/artifactory-jcr \
+  --set artifactory.artifactory.image.version=7.5.5-latest \
   --set artifactory.nginx.enabled=false \
   --set artifactory.ingress.enabled=true \
   --set artifactory.ingress.hosts[0]="artifactory.company.com" \
