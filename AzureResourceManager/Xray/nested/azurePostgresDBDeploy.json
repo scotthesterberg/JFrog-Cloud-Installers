@@ -67,7 +67,6 @@
     {
       "type": "Microsoft.DBforPostgreSQL/servers",
       "apiVersion": "2017-12-01",
-      "kind": "",
       "location": "[variables('db_location')]",
       "name": "[parameters('db_server')]",
       "properties": {
