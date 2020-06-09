@@ -59,7 +59,7 @@
           "name": "[uniqueString(parameters('db_server'), 'AllowAllWindowsAzureIps' )]",
           "type": "firewallrules",
           "location": "[variables('db_location')]",
-          "apiVersion": "2019-06-01-preview",
+          "apiVersion": "2017-12-01",
           "dependsOn": [
             "[concat('Microsoft.Sql/servers/', parameters('db_server'))]"
           ],
