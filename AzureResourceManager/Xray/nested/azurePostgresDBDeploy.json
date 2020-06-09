@@ -116,6 +116,7 @@
           "type": "Microsoft.DBforPostgreSQL/servers/databases",
           "apiversion": "2017-12-01",
           "name": "[concat(parameters('db_server'), '/', parameters('databases').properties[1].name)]",
+          "condition": "[greater(length(parameters('databases').properties), 1)]",
           "dependsOn": [
             "[resourceId('Microsoft.DBforPostgreSQL/servers', parameters('db_server'))]"
           ],
