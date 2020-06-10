@@ -21,7 +21,7 @@
       "value": "Password123!"
     },
     "xray": {
-      "value": false
+      "value": true
     },
     "databases": {
       "value": {
