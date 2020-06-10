@@ -133,6 +133,10 @@
       "type": "string",
       "value": "[concat('jdbc:postgresql://', reference(concat('Microsoft.DBforPostgreSQL/servers/', parameters('db_server'))).fullyQualifiedDomainName, ':5432')]"
     },
+    "dbServerName": {
+      "type": "string",
+      "value": "[parameters('db_server')]"
+    },
     "xrayConnString": {
       "type": "string",
       "value": "[concat('postgres://', reference(concat('Microsoft.DBforPostgreSQL/servers/', parameters('db_server'))).fullyQualifiedDomainName, ':5432')]"
