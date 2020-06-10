@@ -2,6 +2,7 @@
 DB_URL=$(cat /var/lib/cloud/instance/user-data.txt | grep "^JDBC_STR" | sed "s/JDBC_STR=//")
 DB_NAME=$(cat /var/lib/cloud/instance/user-data.txt | grep "^DB_NAME=" | sed "s/DB_NAME=//")
 DB_USER=$(cat /var/lib/cloud/instance/user-data.txt | grep "^DB_ADMIN_USER=" | sed "s/DB_ADMIN_USER=//")
+DB_SERVER=$(cat /var/lib/cloud/instance/user-data.txt | grep "^DB_SERVER=" | sed "s/DB_SERVER=//")
 DB_PASSWORD=$(cat /var/lib/cloud/instance/user-data.txt | grep "^DB_ADMIN_PASSWD=" | sed "s/DB_ADMIN_PASSWD=//")
 STORAGE_ACCT=$(cat /var/lib/cloud/instance/user-data.txt | grep "^STO_ACT_NAME=" | sed "s/STO_ACT_NAME=//")
 STORAGE_CONTAINER=$(cat /var/lib/cloud/instance/user-data.txt | grep "^STO_CTR_NAME=" | sed "s/STO_CTR_NAME=//")
@@ -169,8 +170,8 @@ cat <<EOF >>/var/opt/jfrog/artifactory/etc/system.yaml
     ## Example for postgresql
       type: postgresql
       driver: org.postgresql.Driver
-      url: ${DB_URL}/${DB_NAME}?sslmode=disable
-      username: ${DB_USER}
+      url: ${DB_URL}/${DB_NAME}
+      username: ${DB_USER}@${DB_SERVER}
       password: ${DB_PASSWORD}
 
 EOF
