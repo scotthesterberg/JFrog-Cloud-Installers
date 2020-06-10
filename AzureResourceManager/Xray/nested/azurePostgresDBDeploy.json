@@ -58,6 +58,28 @@
     },
     "databases": {
       "type": "object"
+    },
+    "sslEnforcement": {
+      "type": "string",
+      "allowedValues": [
+        "Enabled",
+        "Disabled"
+      ],
+      "defaultValue": "Enabled",
+      "metadata": {
+        "description": "SSL Enforcement"
+      }
+    },
+    "publicNetworkAccess": {
+      "type": "string",
+      "allowedValues": [
+        "Enabled",
+        "Disabled"
+      ],
+      "defaultValue": "Enabled",
+      "metadata": {
+        "description": "Public Network Access"
+      }
     }
   },
   "variables": {
@@ -73,6 +95,8 @@
         "version": "[parameters('version')]",
         "administratorLogin": "[parameters('db_user')]",
         "administratorLoginPassword": "[parameters('db_password')]",
+        "publicNetworkAccess": "[parameters('publicNetworkAccess')]",
+        "sslEnforcement": "[parameters('sslEnforcement')]",
         "storageProfile": {
           "storageMB": "[parameters('skuSizeMB')]",
           "backupRetentionDays": "[parameters('backupRetentionDays')]",
