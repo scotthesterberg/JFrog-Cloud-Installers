@@ -69,7 +69,6 @@
     },
     "xray": {
       "type": "bool",
-      "defaultValue": true,
       "allowedValues": [
         true,
         false
