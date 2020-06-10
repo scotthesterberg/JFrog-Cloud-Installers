@@ -20,9 +20,6 @@
     "db_password": {
       "value": "Password123!"
     },
-    "xray": {
-      "value": true
-    },
     "databases": {
       "value": {
         "properties": [
