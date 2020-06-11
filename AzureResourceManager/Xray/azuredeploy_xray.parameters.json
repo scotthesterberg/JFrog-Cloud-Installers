@@ -3,7 +3,7 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "clusterName": {
-      "value": "artrtxray"
+      "value": "xrayart"
     },
     "adminUsername": {
       "value": "vmuser"
