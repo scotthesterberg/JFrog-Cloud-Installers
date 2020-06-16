@@ -17,7 +17,7 @@ export DEBIAN_FRONTEND=noninteractive
 
 
 # Create master.key on each node
-mkdir -p /opt/jfrog/xray/var/etc/security/
+sudo mkdir -p /opt/jfrog/xray/var/etc/security/
 cat <<EOF >/opt/jfrog/xray/var/etc/security/master.key
 ${MASTER_KEY}
 EOF
@@ -33,11 +33,11 @@ sed -i -e "s/#ip:/ip: ${HOSTNAME}/" /var/opt/jfrog/xray/etc/system.yaml
 sed -i -e "s/#jfrogUrl:/jfrogUrl: \"http:\/\/${ARTIFACTORY_URL}\"/" /var/opt/jfrog/xray/etc/system.yaml
 sed -i -e "s/#joinKey:..*/joinKey: ${JOIN_KEY}/" /var/opt/jfrog/xray/etc/system.yaml
 # DB configuration
-sed -i -e "s/#type: postgresql/type: postgresql/" /var/opt/jfrog/xray/etc/system.yaml
-sed -i -e "s/#driver: org.postgresql.Driver/driver: org.postgresql.Driver/" /var/opt/jfrog/xray/etc/system.yaml
-sed -i -e "s/#url: postgres:..*/url: postgresql:\/\/${DB_SERVER}.postgres.database.azure.com:5432\/${DB_NAME}?sslmode=disable/" /var/opt/jfrog/xray/etc/system.yaml
-sed -i -e "s/#username: xray/username: ${DB_USER}@${DB_SERVER}/" /var/opt/jfrog/xray/etc/system.yaml
-sed -i -e "s/#password: xray/password: ${DB_PASSWORD}/" /var/opt/jfrog/xray/etc/system.yaml
+sed -i -e "s/#type: postgresql/type: \"postgresql\"/" /var/opt/jfrog/xray/etc/system.yaml
+sed -i -e "s/#driver: org.postgresql.Driver/driver: \"org.postgresql.Driver\"/" /var/opt/jfrog/xray/etc/system.yaml
+sed -i -e "s/#url: postgres:..*/url: \"postgresql:\/\/${DB_SERVER}.postgres.database.azure.com:5432\/${DB_NAME}?sslmode=disable\"/" /var/opt/jfrog/xray/etc/system.yaml
+sed -i -e "s/#username: xray/username: \"${DB_USER}@${DB_SERVER}\"/" /var/opt/jfrog/xray/etc/system.yaml
+sed -i -e "s/#password: xray/password: \"${DB_PASSWORD}\"/" /var/opt/jfrog/xray/etc/system.yaml
 
 
 # Set MS SQL configuration
