@@ -27,9 +27,10 @@ EOF
 #sudo snap install yq
 
 HOSTNAME=$(hostname -i)
-sed -i -e "s/#id: \"<For example: xray1>\"/id: \"${NODE_NAME}\"/" /var/opt/jfrog/xray/etc/system.yaml
+TIMESTAMP=$(echo '('`date +"%s.%N"`' * 1000000)/1' | bc)
+sed -i -e "s/#id: \"<For example: xray1>\"/id: \"xray-${TIMESTAMP}\"/" /var/opt/jfrog/xray/etc/system.yaml
 sed -i -e "s/#ip:..*/ip: ${HOSTNAME}/" /var/opt/jfrog/xray/etc/system.yaml
-sed -i -e "s/#jfrogUrl:..*/jfrogUrl: \"${ARTIFACTORY_URL}\"/" /var/opt/jfrog/xray/etc/system.yaml
+sed -i -e "s/#jfrogUrl:/jfrogUrl: \"http:\/\/${ARTIFACTORY_URL}\"/" /var/opt/jfrog/xray/etc/system.yaml
 sed -i -e "s/#joinKey:..*/joinKey: ${JOIN_KEY}/" /var/opt/jfrog/xray/etc/system.yaml
 # DB configuration
 sed -i -e "s/#type: postgresql/type: postgresql/" /var/opt/jfrog/xray/etc/system.yaml
