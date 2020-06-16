@@ -24,27 +24,35 @@ EOF
 
 
 # /var/opt/jfrog/xray/etc/system.yaml
+#sudo snap install yq
 
 HOSTNAME=$(hostname -i)
-sed -i -e "s/#id: \"art1\"/id: \"${NODE_NAME}\"/" /var/opt/jfrog/xray/etc/system.yaml
-sed -i -e "s/#ip:/ip: ${HOSTNAME}/" /var/opt/jfrog/xray/etc/system.yaml
-sed -i -e "s/#primary: true/primary: ${IS_PRIMARY}/" /var/opt/jfrog/xray/etc/system.yaml
-sed -i -e "s/#haEnabled:/haEnabled:/" /var/opt/jfrog/xray/etc/system.yaml
+sed -i -e "s/#id: \"<For example: xray1>\"/id: \"${NODE_NAME}\"/" /var/opt/jfrog/xray/etc/system.yaml
+sed -i -e "s/#ip:..*/ip: ${HOSTNAME}/" /var/opt/jfrog/xray/etc/system.yaml
+sed -i -e "s/#jfrogUrl:..*/jfrogUrl: \"${ARTIFACTORY_URL}\"/" /var/opt/jfrog/xray/etc/system.yaml
+sed -i -e "s/#joinKey:..*/joinKey: ${JOIN_KEY}/" /var/opt/jfrog/xray/etc/system.yaml
+# DB configuration
+sed -i -e "s/#type: postgresql/type: postgresql/" /var/opt/jfrog/xray/etc/system.yaml
+sed -i -e "s/#driver: org.postgresql.Driver/driver: org.postgresql.Driver/" /var/opt/jfrog/xray/etc/system.yaml
+sed -i -e "s/#url: postgres:..*/url: postgresql:\/\/${DB_NAME}.postgres.database.azure.com:5432\/${DB_NAME}?sslmode=disable/" /var/opt/jfrog/xray/etc/system.yaml
+sed -i -e "s/#username: xray/username: \"${DB_USER}@${DB_SERVER}\"/" /var/opt/jfrog/xray/etc/system.yaml
+sed -i -e "s/#password: xray/password: ${DB_PASSWORD}/" /var/opt/jfrog/xray/etc/system.yaml
+
 
 # Set MS SQL configuration
-cat <<EOF >>/var/opt/jfrog/xray/etc/system.yaml
+#cat <<EOF >>/var/opt/jfrog/xray/etc/system.yaml
     ## One of: mysql, oracle, mssql, postgresql, mariadb
     ## Default: Embedded derby
-      type: postgresql
-      driver: org.postgresql.Driver
-      url: ${DB_URL}/${DB_NAME}?sslmode=disable
-      username: ${DB_USER}@${DB_SERVER}
-      password: ${DB_PASSWORD}
-    jfrogUrl: ${ARTIFACTORY_URL}
-    security:
-      joinKey: ${JOIN_KEY}
+#      type: postgresql
+#      driver: org.postgresql.Driver
+#      url: ${DB_URL}/${DB_NAME}?sslmode=disable
+#      username: ${DB_USER}@${DB_SERVER}
+#      password: ${DB_PASSWORD}
+#    jfrogUrl: "${ARTIFACTORY_URL}"
+#    security:
+#      joinKey: ${JOIN_KEY}
 
-EOF
+#EOF
 
 
 
