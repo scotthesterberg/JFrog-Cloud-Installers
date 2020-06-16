@@ -22,10 +22,6 @@ cat <<EOF >/opt/jfrog/xray/var/etc/security/master.key
 ${MASTER_KEY}
 EOF
 
-
-# /var/opt/jfrog/xray/etc/system.yaml
-#sudo snap install yq
-
 HOSTNAME=$(hostname -i)
 TIMESTAMP=$(echo '('`date +"%s.%N"`' * 1000000)/1' | bc)
 sed -i -e "s/#id: \"<For example: xray1>\"/id: \"xray-${TIMESTAMP}\"/" /var/opt/jfrog/xray/etc/system.yaml
@@ -39,23 +35,7 @@ sed -i -e "s/#url: postgres:..*/url: \"postgres:\/\/${DB_SERVER}.postgres.databa
 sed -i -e "s/#username: xray/username: \"${DB_USER}@${DB_SERVER}\"/" /var/opt/jfrog/xray/etc/system.yaml
 sed -i -e "s/#password: xray/password: \"${DB_PASSWORD}\"/" /var/opt/jfrog/xray/etc/system.yaml
 
-
-# Set MS SQL configuration
-#cat <<EOF >>/var/opt/jfrog/xray/etc/system.yaml
-    ## One of: mysql, oracle, mssql, postgresql, mariadb
-    ## Default: Embedded derby
-#      type: postgresql
-#      driver: org.postgresql.Driver
-#      url: ${DB_URL}/${DB_NAME}?sslmode=disable
-#      username: ${DB_USER}@${DB_SERVER}
-#      password: ${DB_PASSWORD}
-#    jfrogUrl: "${ARTIFACTORY_URL}"
-#    security:
-#      joinKey: ${JOIN_KEY}
-
-#EOF
-
-
+chown xray:xray -R /opt/jfrog/xray/var/etc/security/*
 
 systemctl start xray.service
 echo "INFO: Xray HA installation completed."
