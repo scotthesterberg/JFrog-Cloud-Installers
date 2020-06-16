@@ -35,7 +35,7 @@ sed -i -e "s/#url: postgres:..*/url: \"postgres:\/\/${DB_SERVER}.postgres.databa
 sed -i -e "s/#username: xray/username: \"${DB_USER}@${DB_SERVER}\"/" /var/opt/jfrog/xray/etc/system.yaml
 sed -i -e "s/#password: xray/password: \"${DB_PASSWORD}\"/" /var/opt/jfrog/xray/etc/system.yaml
 
-chown xray:xray -R /opt/jfrog/xray/var/etc/security/*
+chown xray:xray -R /opt/jfrog/xray/var/etc/security/* && chown xray:xray -R /opt/jfrog/xray/var/etc/security/
 
 systemctl start xray.service
 echo "INFO: Xray HA installation completed."
