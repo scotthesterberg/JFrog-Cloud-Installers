@@ -93,7 +93,7 @@
       "name": "[parameters('db_server')]",
       "properties": {
         "version": "[parameters('version')]",
-        "administratorLogin": "[concat(parameters('db_user'), '@', variables('azureSqlServerName'))]",
+        "administratorLogin": "[parameters('db_user')]",
         "administratorLoginPassword": "[parameters('db_password')]",
         "publicNetworkAccess": "[parameters('publicNetworkAccess')]",
         "sslEnforcement": "[parameters('sslEnforcement')]",
