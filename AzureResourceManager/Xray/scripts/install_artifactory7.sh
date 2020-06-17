@@ -171,7 +171,7 @@ cat <<EOF >>/var/opt/jfrog/artifactory/etc/system.yaml
       type: postgresql
       driver: org.postgresql.Driver
       url: ${DB_URL}/${DB_NAME}
-      username: ${DB_USER}@${DB_SERVER}
+      username: ${DB_USER}
       password: ${DB_PASSWORD}
 
 EOF
