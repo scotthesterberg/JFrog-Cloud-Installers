@@ -26,6 +26,7 @@ HOSTNAME=$(hostname -i)
 TIMESTAMP=$(echo '('`date +"%s.%N"`' * 1000000)/1' | bc)
 sed -i -e "s/#id: \"<For example: xray1>\"/id: \"xray-${TIMESTAMP}\"/" /var/opt/jfrog/xray/etc/system.yaml
 sed -i -e "s/#ip:/ip: ${HOSTNAME}/" /var/opt/jfrog/xray/etc/system.yaml
+sed -i -e "s/## Default: auto generated at startup./name: \"xray1-${TIMESTAMP}\"/" /var/opt/jfrog/xray/etc/system.yaml
 sed -i -e "s/#jfrogUrl:/jfrogUrl: \"http:\/\/${ARTIFACTORY_URL}\"/" /var/opt/jfrog/xray/etc/system.yaml
 sed -i -e "s/#joinKey:..*/joinKey: ${JOIN_KEY}/" /var/opt/jfrog/xray/etc/system.yaml
 # DB configuration
