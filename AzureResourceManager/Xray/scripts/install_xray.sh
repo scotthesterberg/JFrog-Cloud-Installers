@@ -37,5 +37,5 @@ sed -i -e "s/#password: xray/password: \"${DB_PASSWORD}\"/" /var/opt/jfrog/xray/
 
 chown xray:xray -R /opt/jfrog/xray/var/etc/security/* && chown xray:xray -R /opt/jfrog/xray/var/etc/security/
 
-systemctl start xray.service
+#systemctl start xray.service
 echo "INFO: Xray HA installation completed."
