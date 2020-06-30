@@ -80,6 +80,19 @@
       "metadata": {
         "description": "Public Network Access"
       }
+    },
+    "db_name": {
+      "type": "string",
+      "defaultValue": "artdb"
+    },
+    "db_edition": {
+      "type": "string",
+      "defaultValue": "Basic",
+      "allowedValues": [
+        "Basic",
+        "Standard",
+        "Premium"
+      ]
     }
   },
   "variables": {

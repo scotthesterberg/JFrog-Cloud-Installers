@@ -24,7 +24,6 @@
       "type": "string",
       "defaultValue": ""
     },
-
     "db_edition": {
       "type": "string",
       "defaultValue": "Basic",
@@ -33,6 +32,9 @@
         "Standard",
         "Premium"
       ]
+    },
+    "databases": {
+      "type": "object"
     }
   },
   "variables": {
