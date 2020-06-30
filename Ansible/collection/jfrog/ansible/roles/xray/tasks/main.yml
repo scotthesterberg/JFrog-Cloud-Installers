@@ -33,7 +33,7 @@
 
 - name: perform prerequisite installation
   include_tasks: "{{ ansible_os_family }}.yml"
-  
+
 - name: ensure etc exists
   file:
     path: "{{ xray_home }}/var/etc"

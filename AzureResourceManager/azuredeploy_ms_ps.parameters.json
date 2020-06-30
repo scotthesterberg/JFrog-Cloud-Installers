@@ -1,0 +1,61 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "clusterName": {
+      "value": "rtha"
+    },
+    "adminUsername": {
+      "value": "vmuser"
+    },
+    "adminPassword": {
+      "value": "PASSWORD"
+    },
+    "db_type": {
+      "value": "MSSQL"
+    },
+    "db_user": {
+      "value": "xray"
+    },
+    "db_password": {
+      "value": "PASSWORD"
+    },
+    "db_name": {
+      "value": "artdb"
+    },
+    "db_edition": {
+      "value": "Basic"
+    },
+    "databases": {
+      "value": {
+        "properties": [
+          {
+            "name": "artdb",
+            "charset": "UTF8",
+            "collation": "English_United States.1252"
+          },
+          {
+            "name": "xray",
+            "charset": "UTF8",
+            "collation": "English_United States.1252"
+          }
+        ]
+      }
+    },
+    "masterKey": {
+      "value": "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"
+    },
+    "joinKey": {
+      "value": "EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE"
+    },
+    "artifactoryLicense1": {
+      "value": "LICENSE1"
+    },
+    "artifactoryLicense2": {
+      "value": "LICENSE2"
+    },
+    "artifactoryLicense3": {
+      "value": "LICENSE3"
+    }
+  }
+}

@@ -18,13 +18,33 @@
     },
     "db_type": {
       "type": "string",
-      "defaultValue": "Postgresql",
+      "defaultValue": "MSSQL",
       "allowedValues": [
         "Postgresql",
         "MSSQL"
       ],
       "metadata": {
-        "description": "Postgresql or MSSQL"
+        "description": "Deploy new Postgresql, MSSQL or use existing DB"
+      }
+    },
+    "db_name": {
+      "type": "string",
+      "minLength": 1,
+      "metadata": {
+        "description": "MSSQL Database name"
+      }
+    },
+    "db_edition": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "Basic",
+      "allowedValues": [
+        "Basic",
+        "Standard",
+        "Premium"
+      ],
+      "metadata": {
+        "description": "MSSQL Database Edition"
       }
     },
     "location": {
@@ -61,7 +81,8 @@
         "7.2.1",
         "7.4.3",
         "7.4.30",
-        "7.4.31"
+        "7.4.31",
+        "7.5.7"
       ],
       "metadata": {
         "description": "Artifactory-vm image version to deploy."
@@ -179,12 +200,8 @@
         "description": "Database Admin password"
       }
     },
-    "db_name": {
-      "type": "string",
-      "minLength": 1,
-      "metadata": {
-        "description": "Database name"
-      }
+    "databases": {
+      "type": "object"
     },
     "storageAccountType": {
       "type": "string",
@@ -196,19 +213,6 @@
       ],
       "metadata": {
         "description": "Storage Account type"
-      }
-    },
-    "db_edition": {
-      "type": "string",
-      "minLength": 1,
-      "defaultValue": "Basic",
-      "allowedValues": [
-        "Basic",
-        "Standard",
-        "Premium"
-      ],
-      "metadata": {
-        "description": "Database Edition"
       }
     },
     "_artifactsLocation": {
@@ -261,11 +265,14 @@
     "storageAccountName": "[concat(variables('namingInfix'), 'storage')]",
     "vmStorageAccountContainerName": "filestore",
     "azureSqlServerName": "[concat(variables('namingInfix'), 'sqlsrv')]",
-    "db_name": "[parameters('db_name')]",
-    "db_user": "[parameters('db_user')]",
+    "artDBname": "[parameters('databases').properties[0].name]",
+    "xrayDBname": "[parameters('databases').properties[1].name]",
+    "postgres_db_user": "[concat(parameters('db_user'), '@', variables('azureSqlServerName'))]",
+    "db_user": "[if(equals(parameters('db_type'), 'Postgresql'), variables('postgres_db_user'), parameters('db_user'))]",
     "db_password": "[parameters('db_password')]",
-    "db_edition": "[parameters('db_edition')]",
     "db_location": "[parameters('location')]",
+    "db_name": "[parameters('db_name')]",
+    "db_edition": "[parameters('db_edition')]",
     "masterKey": "[parameters('masterKey')]",
     "joinKey": "[parameters('joinKey')]",
     "certificate": "[parameters('certificate')]",
@@ -285,7 +292,7 @@
       "version": "[parameters('artifactoryVersion')]"
     },
     "imageReference": "[variables('osType')]",
-    "dbTemplate": "[if(equals(parameters('db_type'), 'MSSQL'), 'azureDBDeploy.json', 'azurePostgresDBDeploy.json')]",
+    "dbTemplate": "[if(equals(parameters('db_type'), 'Postgresql'), 'azurePostgresDBDeploy.json', 'azureDBDeploy.json')]",
     "dbTemplateLocation": "[uri(parameters('_artifactsLocation'), concat('nested/', variables('dbTemplate'), parameters('_artifactsLocationSasToken')))]",
     "nsgName": "[concat(variables('namingInfix'), 'nsg')]"
   },
@@ -729,14 +736,17 @@
           "db_server": {
             "value": "[variables('azureSqlServerName')]"
           },
-          "db_name": {
-            "value": "[parameters('db_name')]"
-          },
-          "db_edition": {
-            "value": "[parameters('db_edition')]"
-          },
           "db_location": {
             "value": "[variables('db_location')]"
+          },
+          "databases": {
+            "value": "[parameters('databases')]"
+          },
+          "db_name": {
+            "value": "[variables('db_name')]"
+          },
+          "db_edition": {
+            "value": "[variables('db_edition')]"
           }
         }
       }
@@ -781,7 +791,7 @@
             "computerNamePrefix": "[variables('namingInfix')]",
             "adminUsername": "[parameters('adminUsername')]",
             "adminPassword": "[parameters('adminPassword')]",
-            "customData": "[base64(concat('#INSTALL SCRIPT INPUTS\nARTIFACTORY_VERSION=', parameters('artifactoryVersion'),'\nCERTIFICATE_KEY=',parameters('certificateKey'),'\nCERTIFICATE=', parameters('certificate'),'\nCERTIFICATE_DOMAIN=',parameters('certificateDomain'),'\nARTIFACTORY_SERVER_NAME=',parameters('artifactoryServerName'),'\nEXTRA_JAVA_OPTS=',parameters('extraJavaOptions'),'\nJDBC_STR=',reference('Microsoft.Resources/deployments/deploySQLDB').outputs.jdbcConnString.value,'\nDB_NAME=',variables('db_name'),'\nDB_ADMIN_USER=',variables('db_user'),'\nDB_ADMIN_PASSWD=',variables('DB_Admin_Password'),'\nSTO_ACT_NAME=',variables('storageAccountName'),'\nSTO_ACT_ENDPOINT=',reference(resourceId('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))).primaryEndpoints.blob,'\nSTO_CTR_NAME=',variables('vmStorageAccountContainerName'),'\nSTO_ACT_KEY=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2018-07-01').keys[0].value,'\nMASTER_KEY=',variables('masterKey'),'\nJOIN_KEY=',variables('joinKey'),'\nIS_PRIMARY=','true','\nLICENSE1=',variables('artifactoryLicense1'),'\nLICENSE2=',variables('artifactoryLicense2'),'\nLICENSE3=',variables('artifactoryLicense3'),'\nLICENSE4=',variables('artifactoryLicense4'),'\nLICENSE5=',variables('artifactoryLicense5'),'\n'))]"
+            "customData": "[base64(concat('#INSTALL SCRIPT INPUTS\nARTIFACTORY_VERSION=', parameters('artifactoryVersion'),'\nCERTIFICATE_KEY=',parameters('certificateKey'),'\nCERTIFICATE=', parameters('certificate'),'\nCERTIFICATE_DOMAIN=',parameters('certificateDomain'),'\nDB_TYPE=',parameters('db_type'),'\nARTIFACTORY_SERVER_NAME=',parameters('artifactoryServerName'),'\nEXTRA_JAVA_OPTS=',parameters('extraJavaOptions'),'\nJDBC_STR=',reference('Microsoft.Resources/deployments/deploySQLDB').outputs.jdbcConnString.value,'\nDB_NAME=',variables('artDBname'),'\nDB_ADMIN_USER=',variables('db_user'),'\nDB_ADMIN_PASSWD=',variables('db_password'),'\nSTO_ACT_NAME=',variables('storageAccountName'),'\nSTO_ACT_ENDPOINT=',reference(resourceId('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))).primaryEndpoints.blob,'\nSTO_CTR_NAME=',variables('vmStorageAccountContainerName'),'\nSTO_ACT_KEY=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2018-07-01').keys[0].value,'\nMASTER_KEY=',variables('masterKey'),'\nJOIN_KEY=',variables('joinKey'),'\nIS_PRIMARY=','true','\nLICENSE1=',variables('artifactoryLicense1'),'\nLICENSE2=',variables('artifactoryLicense2'),'\nLICENSE3=',variables('artifactoryLicense3'),'\nLICENSE4=',variables('artifactoryLicense4'),'\nLICENSE5=',variables('artifactoryLicense5'),'\n'))]"
           },
           "networkProfile": {
             "networkInterfaceConfigurations": [
@@ -880,7 +890,7 @@
             "computerNamePrefix": "[variables('namingInfix')]",
             "adminUsername": "[parameters('adminUsername')]",
             "adminPassword": "[parameters('adminPassword')]",
-            "customData": "[base64(concat('#INSTALL SCRIPT INPUTS\nARTIFACTORY_VERSION=', parameters('artifactoryVersion'),'\nCERTIFICATE_KEY=',parameters('certificateKey'),'\nCERTIFICATE=', parameters('certificate'),'\nCERTIFICATE_DOMAIN=',parameters('certificateDomain'),'\nARTIFACTORY_SERVER_NAME=',parameters('artifactoryServerName'),'\nEXTRA_JAVA_OPTS=',parameters('extraJavaOptions'),'\nJDBC_STR=',reference('Microsoft.Resources/deployments/deploySQLDB').outputs.jdbcConnString.value,'\nDB_NAME=',variables('db_name'),'\nDB_ADMIN_USER=',variables('db_user'),'\nDB_ADMIN_PASSWD=',variables('db_password'),'\nSTO_ACT_NAME=',variables('storageAccountName'),'\nSTO_ACT_ENDPOINT=',reference(resourceId('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))).primaryEndpoints.blob,'\nSTO_CTR_NAME=',variables('vmStorageAccountContainerName'),'\nSTO_ACT_KEY=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2018-07-01').keys[0].value,'\nMASTER_KEY=',variables('masterKey'),'\nJOIN_KEY=',variables('joinKey'),'\nIS_PRIMARY=','false','\nLICENSE1=',variables('artifactoryLicense1'),'\nLICENSE2=',variables('artifactoryLicense2'),'\nLICENSE3=',variables('artifactoryLicense3'),'\nLICENSE4=',variables('artifactoryLicense4'),'\nLICENSE5=',variables('artifactoryLicense5'),'\n'))]"
+            "customData": "[base64(concat('#INSTALL SCRIPT INPUTS\nARTIFACTORY_VERSION=', parameters('artifactoryVersion'),'\nCERTIFICATE_KEY=',parameters('certificateKey'),'\nCERTIFICATE=', parameters('certificate'),'\nCERTIFICATE_DOMAIN=',parameters('certificateDomain'),'\nDB_TYPE=',parameters('db_type'),'\nARTIFACTORY_SERVER_NAME=',parameters('artifactoryServerName'),'\nEXTRA_JAVA_OPTS=',parameters('extraJavaOptions'),'\nJDBC_STR=',reference('Microsoft.Resources/deployments/deploySQLDB').outputs.jdbcConnString.value,'\nDB_NAME=',variables('artDBname'),'\nDB_ADMIN_USER=',variables('db_user'),'\nDB_ADMIN_PASSWD=',variables('db_password'),'\nSTO_ACT_NAME=',variables('storageAccountName'),'\nSTO_ACT_ENDPOINT=',reference(resourceId('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))).primaryEndpoints.blob,'\nSTO_CTR_NAME=',variables('vmStorageAccountContainerName'),'\nSTO_ACT_KEY=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2018-07-01').keys[0].value,'\nMASTER_KEY=',variables('masterKey'),'\nJOIN_KEY=',variables('joinKey'),'\nIS_PRIMARY=','false','\nLICENSE1=',variables('artifactoryLicense1'),'\nLICENSE2=',variables('artifactoryLicense2'),'\nLICENSE3=',variables('artifactoryLicense3'),'\nLICENSE4=',variables('artifactoryLicense4'),'\nLICENSE5=',variables('artifactoryLicense5'),'\n'))]"
           },
           "networkProfile": {
             "networkInterfaceConfigurations": [

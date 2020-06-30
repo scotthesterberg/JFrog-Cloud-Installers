@@ -2,6 +2,7 @@
 DB_URL=$(cat /var/lib/cloud/instance/user-data.txt | grep "^JDBC_STR" | sed "s/JDBC_STR=//")
 DB_NAME=$(cat /var/lib/cloud/instance/user-data.txt | grep "^DB_NAME=" | sed "s/DB_NAME=//")
 DB_USER=$(cat /var/lib/cloud/instance/user-data.txt | grep "^DB_ADMIN_USER=" | sed "s/DB_ADMIN_USER=//")
+DB_TYPE=$(cat /var/lib/cloud/instance/user-data.txt | grep "^DB_TYPE=" | sed "s/DB_TYPE=//")
 DB_PASSWORD=$(cat /var/lib/cloud/instance/user-data.txt | grep "^DB_ADMIN_PASSWD=" | sed "s/DB_ADMIN_PASSWD=//")
 STORAGE_ACCT=$(cat /var/lib/cloud/instance/user-data.txt | grep "^STO_ACT_NAME=" | sed "s/STO_ACT_NAME=//")
 STORAGE_CONTAINER=$(cat /var/lib/cloud/instance/user-data.txt | grep "^STO_CTR_NAME=" | sed "s/STO_CTR_NAME=//")
@@ -19,6 +20,10 @@ export DEBIAN_FRONTEND=noninteractive
 #Generate Self-Signed Cert
 mkdir -p /etc/pki/tls/private/ /etc/pki/tls/certs/
 openssl req -nodes -x509 -newkey rsa:4096 -keyout /etc/pki/tls/private/example.key -out /etc/pki/tls/certs/example.pem -days 356 -subj "/C=US/ST=California/L=SantaClara/O=IT/CN=*.localhost"
+
+# TEMPORARY. Will be moved to the VM image script. Install Postgresql driver
+curl --retry 5 -L -o /opt/jfrog/artifactory/app/artifactory/tomcat/lib/postgresql-9.4.1212.jar https://jdbc.postgresql.org/download/postgresql-9.4.1212.jar >> /tmp/install-databse-driver.log 2>&1
+
 
 CERTIFICATE_DOMAIN=$(cat /var/lib/cloud/instance/user-data.txt | grep "^CERTIFICATE_DOMAIN=" | sed "s/CERTIFICATE_DOMAIN=//")
 [ -z "$CERTIFICATE_DOMAIN" ] && CERTIFICATE_DOMAIN=artifactory
@@ -145,11 +150,13 @@ sed -i -e "s/#ip:/ip: ${HOSTNAME}/" /var/opt/jfrog/artifactory/etc/system.yaml
 sed -i -e "s/#primary: true/primary: ${IS_PRIMARY}/" /var/opt/jfrog/artifactory/etc/system.yaml
 sed -i -e "s/#haEnabled:/haEnabled:/" /var/opt/jfrog/artifactory/etc/system.yaml
 
-# Set MS SQL configuration
-cat <<EOF >>/var/opt/jfrog/artifactory/etc/system.yaml
+
+if [ "${DB_TYPE}" = "MSSQL" ]; then
+    # Set MS SQL configuration
+    cat <<EOF >>/var/opt/jfrog/artifactory/etc/system.yaml
     ## One of: mysql, oracle, mssql, postgresql, mariadb
     ## Default: Embedded derby
-    ## Example for mysql
+    ## Example for mssql
       type: mssql
       driver: com.microsoft.sqlserver.jdbc.SQLServerDriver
       url: ${DB_URL};databaseName=${DB_NAME};sendStringParametersAsUnicode=false;applicationName=Artifactory Binary Repository
@@ -157,6 +164,20 @@ cat <<EOF >>/var/opt/jfrog/artifactory/etc/system.yaml
       password: ${DB_PASSWORD}
 
 EOF
+elif [ "${DB_TYPE}" = "Postgresql" ]; then
+   # Set Postgresql settings (add if/else for Postgres/MSSQL) ATTENTION - RT VM 7.5.5 doesn't have Postgres driver!!
+   cat <<EOF >>/var/opt/jfrog/artifactory/etc/system.yaml
+    ## One of: mysql, oracle, mssql, postgresql, mariadb
+    ## Default: Embedded derby
+    ## Example for postgresql
+      type: postgresql
+      driver: org.postgresql.Driver
+      url: ${DB_URL}/${DB_NAME}
+      username: ${DB_USER}
+      password: ${DB_PASSWORD}
+
+EOF
+fi
 
 # Create master.key on each node
 mkdir -p /opt/jfrog/artifactory/var/etc/security/

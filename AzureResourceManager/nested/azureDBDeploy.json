@@ -26,11 +26,15 @@
     },
     "db_edition": {
       "type": "string",
+      "defaultValue": "Basic",
       "allowedValues": [
         "Basic",
         "Standard",
         "Premium"
       ]
+    },
+    "databases": {
+      "type": "object"
     }
   },
   "variables": {
