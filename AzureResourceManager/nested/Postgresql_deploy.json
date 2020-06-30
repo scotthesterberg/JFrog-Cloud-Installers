@@ -93,6 +93,9 @@
         "Standard",
         "Premium"
       ]
+    },
+    "manual_db_url": {
+      "type": "string"
     }
   },
   "variables": {
