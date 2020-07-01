@@ -151,7 +151,7 @@ sed -i -e "s/#primary: true/primary: ${IS_PRIMARY}/" /var/opt/jfrog/artifactory/
 sed -i -e "s/#haEnabled:/haEnabled:/" /var/opt/jfrog/artifactory/etc/system.yaml
 
 
-if [[ "${DB_TYPE}" = *"MSSQL"* ]]; then
+if [[ $DB_TYPE =~ "MSSQL" ]]; then
     # Set MS SQL configuration
     cat <<EOF >>/var/opt/jfrog/artifactory/etc/system.yaml
     ## One of: mysql, oracle, mssql, postgresql, mariadb
@@ -164,7 +164,7 @@ if [[ "${DB_TYPE}" = *"MSSQL"* ]]; then
       password: ${DB_PASSWORD}
 
 EOF
-elif [[ "${DB_TYPE}" = *"Postgresql"* ]]; then
+elif [[ $DB_TYPE =~ "Postgresql" ]]; then
    # Set Postgresql settings (add if/else for Postgres/MSSQL) ATTENTION - RT VM 7.5.5 doesn't have Postgres driver!!
    cat <<EOF >>/var/opt/jfrog/artifactory/etc/system.yaml
     ## One of: mysql, oracle, mssql, postgresql, mariadb
