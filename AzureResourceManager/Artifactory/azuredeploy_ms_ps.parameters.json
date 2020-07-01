@@ -9,16 +9,16 @@
       "value": "vmuser"
     },
     "adminPassword": {
-      "value": "PASSWORD"
+      "value": "Password"
     },
     "db_type": {
-      "value": "MSSQL"
+      "value": "Postgresql_deploy.json"
     },
     "db_user": {
-      "value": "xray"
+      "value": "artifactory"
     },
     "db_password": {
-      "value": "PASSWORD"
+      "value": "Password"
     },
     "db_name": {
       "value": "artdb"
@@ -42,11 +42,23 @@
         ]
       }
     },
+    "manual_db_url": {
+      "value": "jdbc:postgresql://<db_server>.postgres.database.azure.com:5432"
+    },
+    "db_server": {
+      "value": "postgressrvr"
+    },
     "masterKey": {
       "value": "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"
     },
     "joinKey": {
       "value": "EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE"
+    },
+    "certificate": {
+      "value": ""
+    },
+    "certificateKey": {
+      "value": ""
     },
     "artifactoryLicense1": {
       "value": "LICENSE1"

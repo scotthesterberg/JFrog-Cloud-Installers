@@ -3,10 +3,10 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "db_user": {
-      "value": "xray"
+      "value": "artifactory"
     },
     "db_password": {
-      "value": "PASSWORD"
+      "value": "Password123!"
     },
     "db_server": {
       "value": "postgressrvr"
