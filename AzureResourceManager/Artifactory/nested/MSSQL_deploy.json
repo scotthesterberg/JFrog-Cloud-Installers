@@ -21,8 +21,7 @@
       "minLength": 1
     },
     "db_location": {
-      "type": "string",
-      "defaultValue": ""
+      "type": "string"
     },
     "db_edition": {
       "type": "string",
@@ -41,15 +40,14 @@
     }
   },
   "variables": {
-    "rtdbCollation": "Latin1_General_100_CS_AS",
-    "db_location": "[if(equals(parameters('db_location'), ''), resourceGroup().location, parameters('db_location'))]"
+    "rtdbCollation": "Latin1_General_100_CS_AS"
   },
   "resources": [
     {
       "name": "[parameters('db_server')]",
       "type": "Microsoft.Sql/servers",
       "kind": "v12.0",
-      "location": "[variables('db_location')]",
+      "location": "[parameters('db_location')]",
       "apiVersion": "2019-06-01-preview",
       "tags": {
         "displayName": "artifactoryDB"
@@ -63,7 +61,7 @@
         {
           "name": "[uniqueString(parameters('db_server'), 'AllowAllWindowsAzureIps' )]",
           "type": "firewallrules",
-          "location": "[variables('db_location')]",
+          "location": "[parameters('db_location')]",
           "apiVersion": "2019-06-01-preview",
           "dependsOn": [
             "[concat('Microsoft.Sql/servers/', parameters('db_server'))]"
@@ -77,7 +75,7 @@
           "name": "[parameters('db_name')]",
           "type": "databases",
           "kind": "v12.0,user",
-          "location": "[variables('db_location')]",
+          "location": "[parameters('db_location')]",
           "apiVersion": "2019-06-01-preview",
           "dependsOn": [
             "[parameters('db_server')]"

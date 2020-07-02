@@ -21,8 +21,7 @@
       "minLength": 1
     },
     "db_location": {
-      "type": "string",
-      "defaultValue": ""
+      "type": "string"
     },
     "db_edition": {
       "type": "string",
