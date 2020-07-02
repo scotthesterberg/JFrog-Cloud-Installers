@@ -162,7 +162,7 @@
                 },
                 {
                   "label": "7.4.3",
-                  "value": "7.4.3"
+                  "value": "7.4.30"
                 }
               ],
               "required": true
@@ -179,6 +179,23 @@
             "toolTip": "Master key for Artifactory cluster. Generate master.key using command '$openssl rand -hex 16'",
             "constraints": {
               "required": true,
+              "regex": "^[a-z0-9A-Z]{1,32}$",
+              "validationMessage": "Only alphanumeric characters are allowed, and the value must be 1-32 characters long."
+            },
+            "options": {
+              "hideConfirmation": true
+            }
+          },
+          {
+            "name": "joinKey",
+            "type": "Microsoft.Common.PasswordBox",
+            "label": {
+              "password": "Artifactory join Key",
+              "confirmPassword": "Confirm join Key"
+            },
+            "toolTip": "Join key for Artifactory cluster. Generate join.key using command '$openssl rand -hex 16'",
+            "constraints": {
+              "required": false,
               "regex": "^[a-z0-9A-Z]{1,32}$",
               "validationMessage": "Only alphanumeric characters are allowed, and the value must be 1-32 characters long."
             },
@@ -250,7 +267,7 @@
             },
             "toolTip": "To use Artifactory as docker registry you need to provide wild card valid Certificate. Provide your SSL Certificate.",
             "constraints": {
-              "required": true,
+              "required": false,
               "regex": "^(-----BEGIN CERTIFICATE-----)(.+)(-----END CERTIFICATE-----)$",
               "validationMessage": "Provide SSL Certificate."
             },
@@ -267,7 +284,7 @@
             },
             "toolTip": "Provide your SSL Certificate key",
             "constraints": {
-              "required": true,
+              "required": false,
               "regex": "^(-----BEGIN)(.+)(PRIVATE KEY-----)(.+)(-----END)(.+)(PRIVATE KEY-----)$",
               "validationMessage": "Provide SSL Certificate Key."
             },
@@ -282,7 +299,7 @@
             "defaultValue": "artifactory",
             "toolTip": "Provide your Certificate Domain Name. For e.g jfrog.team for certificate with *.jfrog.team",
             "constraints": {
-              "required": true,
+              "required": false,
               "regex": "^(\\*)*([\\w-\\.])+$",
               "validationMessage": "Must be a valid fully-qualified domain name."
             }
@@ -323,7 +340,77 @@
         "bladeTitle": "Database Credential",
         "elements": [
           {
-            "name": "dbAdminUsername",
+            "name": "infoMessage",
+            "type": "Microsoft.Common.InfoBox",
+            "visible": true,
+            "options": {
+              "icon": "Info",
+              "text": "You can deploy a new Database or use your existing Postgres or MSSQL Databeses"
+            }
+          },
+          {
+            "name": "db_type",
+            "type": "Microsoft.Common.DropDown",
+            "label": "Database options",
+            "toolTip": "Deploy a new DB instance or use an existing DB",
+            "constraints": {
+              "required": true,
+              "allowedValues": [
+                {
+                  "label": "Deploy a new Postgresql instance",
+                  "value": "Postgresql_deploy.json"
+                },
+                {
+                  "label": "Use existing Postgresql instance",
+                  "value": "Postgresql_existing.json"
+                },
+                {
+                  "label": "Deploy a new MSSQL instance",
+                  "value": "MSSQL_deploy.json"
+                },
+                {
+                  "label": "Use existing MSSQL instance",
+                  "value": "MSSQL_existing.json"
+                }
+              ]
+            },
+            "visible": true
+          },
+          {
+            "name": "db_name",
+            "type": "Microsoft.Common.TextBox",
+            "label": "Database name",
+            "toolTip": "Database name",
+            "constraints": {
+              "required": true,
+              "regex": "^[a-z0-9A-Z]{1,15}$",
+              "validationMessage": "Only alphanumeric characters are allowed, and the value must be 1-15 characters long."
+            }
+          },
+          {
+            "name": "db_server",
+            "type": "Microsoft.Common.TextBox",
+            "label": "Database server name. Skip if a new deployment is selected",
+            "toolTip": "Database server name",
+            "constraints": {
+              "required": false,
+              "regex": "^[a-z0-9A-Z]{1,15}$",
+              "validationMessage": "Only alphanumeric characters are allowed, and the value must be 1-15 characters long."
+            }
+          },
+          {
+            "name": "manual_db_url",
+            "type": "Microsoft.Common.TextBox",
+            "label": "Database connection string. Skip if a new deployment is selected",
+            "toolTip": "Jdbc connection string for MSSQL or Postgresql",
+            "constraints": {
+              "required": false,
+              "regex": "^[a-z0-9A-Z]{1,15}$",
+              "validationMessage": "Only alphanumeric characters are allowed, and the value must be 1-15 characters long."
+            }
+          },
+          {
+            "name": "db_user",
             "type": "Microsoft.Compute.UserNameTextBox",
             "label": "User name",
             "toolTip": "Admin username for the database",
@@ -335,7 +422,7 @@
             }
           },
           {
-            "name": "dbAdminPassword",
+            "name": "db_password",
             "type": "Microsoft.Common.PasswordBox",
             "label": {
               "password": "Password",
@@ -353,22 +440,11 @@
             "visible": true
           },
           {
-            "name": "dbName",
-            "type": "Microsoft.Common.TextBox",
-            "label": "Database name",
-            "toolTip": "Database name",
-            "constraints": {
-              "required": true,
-              "regex": "^[a-z0-9A-Z]{1,15}$",
-              "validationMessage": "Only alphanumeric characters are allowed, and the value must be 1-15 characters long."
-            }
-          },
-          {
-            "name": "dbEdition",
+            "name": "db_edition",
             "type": "Microsoft.Common.DropDown",
             "label": "Database Edition",
             "defaultValue": "Basic",
-            "toolTip": "Edition of Database to use",
+            "toolTip": "MSSQL. Edition of Database to use",
             "constraints": {
               "allowedValues": [
                 {
@@ -384,7 +460,7 @@
                   "value": "Premium"
                 }
               ],
-              "required": true
+              "required": false
             },
             "visible": true
           }
@@ -426,6 +502,7 @@
       "nodeCount": "[steps('clusterConfig').nodeCount]",
       "artifactoryVersion": "[steps('clusterConfig').artifactoryVersion]",
       "masterKey": "[steps('clusterConfig').masterKey]",
+      "joinKey": "[steps('clusterConfig').joinKey]",
       "artifactoryLicense1": "[steps('clusterConfig').artifactoryLicense1]",
       "artifactoryLicense2": "[steps('clusterConfig').artifactoryLicense2]",
       "artifactoryLicense3": "[steps('clusterConfig').artifactoryLicense3]",
@@ -438,10 +515,13 @@
       "extraJavaOptions": "[steps('clusterConfig').extraJavaOptions]",
       "adminUsername": "[steps('vmCredentials').adminUsername]",
       "adminPassword": "[steps('vmCredentials').adminPassword.password]",
-      "DB_Admin_User": "[steps('databaseConfig').dbAdminUsername]",
-      "DB_Admin_Password": "[steps('databaseConfig').dbAdminPassword]",
-      "DB_Name": "[steps('databaseConfig').dbName]",
-      "DB_Edition": "[steps('databaseConfig').dbEdition]",
+      "db_type": "[steps('databaseConfig').db_type]",
+      "db_name": "[steps('databaseConfig').db_name]",
+      "db_server": "[steps('databaseConfig').db_server]",
+      "manual_db_url": "[steps('databaseConfig').manual_db_url]",
+      "db_user": "[steps('databaseConfig').db_user]",
+      "db_password": "[steps('databaseConfig').db_password]",
+      "db_edition": "[steps('databaseConfig').db_edition]",
       "storageAccountType": "[steps('storageConfig').storageAccountsType]"
     }
   }

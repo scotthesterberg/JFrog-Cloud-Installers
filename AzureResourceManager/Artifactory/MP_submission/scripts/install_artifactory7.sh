@@ -1,26 +1,31 @@
 #!/bin/bash
+
+# Script stdout and stderr are stored in /var/lib/waagent/custom-script/download on the VM
 DB_URL=$(cat /var/lib/cloud/instance/user-data.txt | grep "^JDBC_STR" | sed "s/JDBC_STR=//")
 DB_NAME=$(cat /var/lib/cloud/instance/user-data.txt | grep "^DB_NAME=" | sed "s/DB_NAME=//")
 DB_USER=$(cat /var/lib/cloud/instance/user-data.txt | grep "^DB_ADMIN_USER=" | sed "s/DB_ADMIN_USER=//")
+DB_TYPE=$(cat /var/lib/cloud/instance/user-data.txt | grep "^DB_TYPE=" | sed "s/DB_TYPE=//")
 DB_PASSWORD=$(cat /var/lib/cloud/instance/user-data.txt | grep "^DB_ADMIN_PASSWD=" | sed "s/DB_ADMIN_PASSWD=//")
 STORAGE_ACCT=$(cat /var/lib/cloud/instance/user-data.txt | grep "^STO_ACT_NAME=" | sed "s/STO_ACT_NAME=//")
 STORAGE_CONTAINER=$(cat /var/lib/cloud/instance/user-data.txt | grep "^STO_CTR_NAME=" | sed "s/STO_CTR_NAME=//")
 STORAGE_ACCT_KEY=$(cat /var/lib/cloud/instance/user-data.txt | grep "^STO_ACT_KEY=" | sed "s/STO_ACT_KEY=//")
 ARTIFACTORY_VERSION=$(cat /var/lib/cloud/instance/user-data.txt | grep "^ARTIFACTORY_VERSION=" | sed "s/ARTIFACTORY_VERSION=//")
 MASTER_KEY=$(cat /var/lib/cloud/instance/user-data.txt | grep "^MASTER_KEY=" | sed "s/MASTER_KEY=//")
-JOIN_KEY=$(cat /var/lib/cloud/instance/user-data.txt | grep "^JOIN_KEY=" | sed "s/JOIN_KEY=//")
 IS_PRIMARY=$(cat /var/lib/cloud/instance/user-data.txt | grep "^IS_PRIMARY=" | sed "s/IS_PRIMARY=//")
 ARTIFACTORY_LICENSE_1=$(cat /var/lib/cloud/instance/user-data.txt | grep "^LICENSE1=" | sed "s/LICENSE1=//")
 ARTIFACTORY_LICENSE_2=$(cat /var/lib/cloud/instance/user-data.txt | grep "^LICENSE2=" | sed "s/LICENSE2=//")
 ARTIFACTORY_LICENSE_3=$(cat /var/lib/cloud/instance/user-data.txt | grep "^LICENSE3=" | sed "s/LICENSE3=//")
 ARTIFACTORY_LICENSE_4=$(cat /var/lib/cloud/instance/user-data.txt | grep "^LICENSE4=" | sed "s/LICENSE4=//")
 ARTIFACTORY_LICENSE_5=$(cat /var/lib/cloud/instance/user-data.txt | grep "^LICENSE5=" | sed "s/LICENSE5=//")
-#JOIN_KEY_GENERATED=$(openssl rand -hex 16)
 export DEBIAN_FRONTEND=noninteractive
 
 #Generate Self-Signed Cert
 mkdir -p /etc/pki/tls/private/ /etc/pki/tls/certs/
 openssl req -nodes -x509 -newkey rsa:4096 -keyout /etc/pki/tls/private/example.key -out /etc/pki/tls/certs/example.pem -days 356 -subj "/C=US/ST=California/L=SantaClara/O=IT/CN=*.localhost"
+
+# TEMPORARY. Will be moved to the VM image script. Install Postgresql driver
+curl --retry 5 -L -o /opt/jfrog/artifactory/app/artifactory/tomcat/lib/postgresql-9.4.1212.jar https://jdbc.postgresql.org/download/postgresql-9.4.1212.jar >> /tmp/install-databse-driver.log 2>&1
+
 
 CERTIFICATE_DOMAIN=$(cat /var/lib/cloud/instance/user-data.txt | grep "^CERTIFICATE_DOMAIN=" | sed "s/CERTIFICATE_DOMAIN=//")
 [ -z "$CERTIFICATE_DOMAIN" ] && CERTIFICATE_DOMAIN=artifactory
@@ -147,11 +152,13 @@ sed -i -e "s/#ip:/ip: ${HOSTNAME}/" /var/opt/jfrog/artifactory/etc/system.yaml
 sed -i -e "s/#primary: true/primary: ${IS_PRIMARY}/" /var/opt/jfrog/artifactory/etc/system.yaml
 sed -i -e "s/#haEnabled:/haEnabled:/" /var/opt/jfrog/artifactory/etc/system.yaml
 
-# Set MS SQL configuration
-cat <<EOF >>/var/opt/jfrog/artifactory/etc/system.yaml
+
+if [[ $DB_TYPE =~ "MSSQL" ]]; then
+    # Set MS SQL configuration
+    cat <<EOF >>/var/opt/jfrog/artifactory/etc/system.yaml
     ## One of: mysql, oracle, mssql, postgresql, mariadb
     ## Default: Embedded derby
-    ## Example for mysql
+    ## Example for mssql
       type: mssql
       driver: com.microsoft.sqlserver.jdbc.SQLServerDriver
       url: ${DB_URL};databaseName=${DB_NAME};sendStringParametersAsUnicode=false;applicationName=Artifactory Binary Repository
@@ -159,10 +166,23 @@ cat <<EOF >>/var/opt/jfrog/artifactory/etc/system.yaml
       password: ${DB_PASSWORD}
 
 EOF
+elif [[ $DB_TYPE =~ "Postgresql" ]]; then
+   # Set Postgresql settings (add if/else for Postgres/MSSQL) ATTENTION - RT VM 7.5.5 doesn't have Postgres driver!!
+   cat <<EOF >>/var/opt/jfrog/artifactory/etc/system.yaml
+    ## One of: mysql, oracle, mssql, postgresql, mariadb
+    ## Default: Embedded derby
+    ## Example for postgresql
+      type: postgresql
+      driver: org.postgresql.Driver
+      url: ${DB_URL}/${DB_NAME}
+      username: ${DB_USER}
+      password: ${DB_PASSWORD}
+
+EOF
+fi
 
 # Create master.key on each node
 mkdir -p /opt/jfrog/artifactory/var/etc/security/
-
 cat <<EOF >/opt/jfrog/artifactory/var/etc/security/master.key
 ${MASTER_KEY}
 EOF
@@ -194,9 +214,9 @@ rm /tmp/temp.key
 chown artifactory:artifactory -R /var/opt/jfrog/artifactory/*  && chown artifactory:artifactory -R /var/opt/jfrog/artifactory/etc/security && chown artifactory:artifactory -R /var/opt/jfrog/artifactory/etc/*
 
 # start Artifactory
-sleep $((RANDOM % 120))
-service artifactory start
-service nginx start
+sleep 120
+systemctl start artifactory
+systemctl start nginx
 nginx -s reload
 echo "INFO: Artifactory HA installation completed."
 echo ""

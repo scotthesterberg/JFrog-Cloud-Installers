@@ -103,14 +103,14 @@
       }
     },
     "masterKey": {
-      "type": "string",
+      "type": "securestring",
       "maxLength": 64,
       "metadata": {
         "description": "Master key for Artifactory cluster. Generate master.key using command '$openssl rand -hex 16'"
       }
     },
     "joinKey": {
-      "type": "string",
+      "type": "securestring",
       "maxLength": 64,
       "metadata": {
         "description": "Join key for Artifactory cluster. Generate join.key using command '$openssl rand -hex 16'"
@@ -213,7 +213,16 @@
       }
     },
     "databases": {
-      "type": "object"
+      "type": "object",
+      "defaultValue": {
+        "properties": [
+          {
+            "name": "artdb",
+            "charset": "UTF8",
+            "collation": "English_United States.1252"
+          }
+        ]
+      }
     },
     "storageAccountType": {
       "type": "string",
@@ -278,7 +287,6 @@
     "vmStorageAccountContainerName": "filestore",
     "azureSqlServerName": "[if(or(equals(parameters('db_type'), 'MSSQL_existing.json'),equals(parameters('db_type'),'Postgresql_existing.json')), parameters('db_server'), concat(variables('namingInfix'), 'sqlsrv'))]",
     "artDBname": "[parameters('databases').properties[0].name]",
-    "xrayDBname": "[parameters('databases').properties[1].name]",
     "postgres_db_user": "[concat(parameters('db_user'), '@', variables('azureSqlServerName'))]",
     "db_user": "[if(or(equals(parameters('db_type'), 'Postgresql_deploy.json'),equals(parameters('db_type'),'Postgresql_existing.json')), variables('postgres_db_user'), parameters('db_user'))]",
     "db_password": "[parameters('db_password')]",
@@ -326,7 +334,7 @@
       "type": "Microsoft.Network/networkSecurityGroups",
       "location": "[parameters('location')]",
       "name": "[variables('nsgName')]",
-      "apiVersion": "2018-07-01",
+      "apiVersion": "2020-03-01",
       "properties": {
         "securityRules": [
           {
@@ -406,7 +414,7 @@
       "type": "Microsoft.Network/virtualNetworks",
       "name": "[variables('virtualNetworkName')]",
       "location": "[parameters('location')]",
-      "apiVersion": "2018-07-01",
+      "apiVersion": "2020-03-01",
       "dependsOn": [
         "[concat('Microsoft.Network/networkSecurityGroups/', variables('nsgName'))]"
       ],
@@ -439,7 +447,7 @@
       }
     },
     {
-      "apiVersion": "2018-07-01",
+      "apiVersion": "2020-03-01",
       "type": "Microsoft.Network/networkInterfaces",
       "name": "[variables('nicPrimaryName')]",
       "location": "[parameters('location')]",
@@ -466,7 +474,7 @@
       }
     },
     {
-      "apiVersion": "2018-07-01",
+      "apiVersion": "2020-03-01",
       "type": "Microsoft.Network/networkInterfaces",
       "name": "[variables('nicMemberName')]",
       "location": "[parameters('location')]",
@@ -499,7 +507,7 @@
       "sku": {
         "name": "Standard"
       },
-      "apiVersion": "2018-07-01",
+      "apiVersion": "2020-03-01",
       "properties": {
         "publicIPAllocationMethod": "Static",
         "dnsSettings": {
@@ -514,7 +522,7 @@
       "sku": {
         "name": "Standard"
       },
-      "apiVersion": "2018-07-01",
+      "apiVersion": "2020-03-01",
       "properties": {
         "publicIPAllocationMethod": "Static",
         "dnsSettings": {
@@ -526,7 +534,7 @@
       "type": "Microsoft.Network/loadBalancers",
       "name": "[variables('lbName')]",
       "location": "[parameters('location')]",
-      "apiVersion": "2018-07-01",
+      "apiVersion": "2020-03-01",
       "sku": {
         "name": "Standard"
       },
@@ -715,7 +723,7 @@
       }
     },
     {
-      "apiVersion": "2018-07-01",
+      "apiVersion": "2019-06-01",
       "type": "Microsoft.Storage/storageAccounts",
       "name": "[variables('storageAccountName')]",
       "location": "[parameters('location')]",
@@ -743,7 +751,7 @@
             "value": "[parameters('db_user')]"
           },
           "db_password": {
-            "value": "[parameters('db_password')]"
+            "value": "[variables('db_password')]"
           },
           "db_server": {
             "value": "[variables('azureSqlServerName')]"
@@ -806,7 +814,7 @@
             "computerNamePrefix": "[variables('namingInfix')]",
             "adminUsername": "[parameters('adminUsername')]",
             "adminPassword": "[parameters('adminPassword')]",
-            "customData": "[base64(concat('#INSTALL SCRIPT INPUTS\nARTIFACTORY_VERSION=', parameters('artifactoryVersion'),'\nCERTIFICATE_KEY=',parameters('certificateKey'),'\nCERTIFICATE=', parameters('certificate'),'\nCERTIFICATE_DOMAIN=',parameters('certificateDomain'),'\nDB_TYPE=',parameters('db_type'),'\nARTIFACTORY_SERVER_NAME=',parameters('artifactoryServerName'),'\nEXTRA_JAVA_OPTS=',parameters('extraJavaOptions'),'\nJDBC_STR=',reference('Microsoft.Resources/deployments/deploySQLDB').outputs.jdbcConnString.value,'\nDB_NAME=',variables('artDBname'),'\nDB_ADMIN_USER=',variables('db_user'),'\nDB_ADMIN_PASSWD=',variables('db_password'),'\nSTO_ACT_NAME=',variables('storageAccountName'),'\nSTO_ACT_ENDPOINT=',reference(resourceId('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))).primaryEndpoints.blob,'\nSTO_CTR_NAME=',variables('vmStorageAccountContainerName'),'\nSTO_ACT_KEY=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2018-07-01').keys[0].value,'\nMASTER_KEY=',variables('masterKey'),'\nJOIN_KEY=',variables('joinKey'),'\nIS_PRIMARY=','true','\nLICENSE1=',variables('artifactoryLicense1'),'\nLICENSE2=',variables('artifactoryLicense2'),'\nLICENSE3=',variables('artifactoryLicense3'),'\nLICENSE4=',variables('artifactoryLicense4'),'\nLICENSE5=',variables('artifactoryLicense5'),'\n'))]"
+            "customData": "[base64(concat('#INSTALL SCRIPT INPUTS\nARTIFACTORY_VERSION=', parameters('artifactoryVersion'),'\nCERTIFICATE_KEY=',variables('certificateKey'),'\nCERTIFICATE=', variables('certificate'),'\nCERTIFICATE_DOMAIN=',variables('certificateDomain'),'\nDB_TYPE=',parameters('db_type'),'\nARTIFACTORY_SERVER_NAME=',variables('artifactoryServerName'),'\nEXTRA_JAVA_OPTS=',variables('extraJavaOptions'),'\nJDBC_STR=',reference('Microsoft.Resources/deployments/deploySQLDB').outputs.jdbcConnString.value,'\nDB_NAME=',variables('artDBname'),'\nDB_ADMIN_USER=',variables('db_user'),'\nDB_ADMIN_PASSWD=',variables('db_password'),'\nSTO_ACT_NAME=',variables('storageAccountName'),'\nSTO_ACT_ENDPOINT=',reference(resourceId('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))).primaryEndpoints.blob,'\nSTO_CTR_NAME=',variables('vmStorageAccountContainerName'),'\nSTO_ACT_KEY=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2018-07-01').keys[0].value,'\nMASTER_KEY=',variables('masterKey'),'\nJOIN_KEY=',variables('joinKey'),'\nIS_PRIMARY=','true','\nLICENSE1=',variables('artifactoryLicense1'),'\nLICENSE2=',variables('artifactoryLicense2'),'\nLICENSE3=',variables('artifactoryLicense3'),'\nLICENSE4=',variables('artifactoryLicense4'),'\nLICENSE5=',variables('artifactoryLicense5'),'\n'))]"
           },
           "networkProfile": {
             "networkInterfaceConfigurations": [
@@ -905,7 +913,7 @@
             "computerNamePrefix": "[variables('namingInfix')]",
             "adminUsername": "[parameters('adminUsername')]",
             "adminPassword": "[parameters('adminPassword')]",
-            "customData": "[base64(concat('#INSTALL SCRIPT INPUTS\nARTIFACTORY_VERSION=', parameters('artifactoryVersion'),'\nCERTIFICATE_KEY=',parameters('certificateKey'),'\nCERTIFICATE=', parameters('certificate'),'\nCERTIFICATE_DOMAIN=',parameters('certificateDomain'),'\nDB_TYPE=',parameters('db_type'),'\nARTIFACTORY_SERVER_NAME=',parameters('artifactoryServerName'),'\nEXTRA_JAVA_OPTS=',parameters('extraJavaOptions'),'\nJDBC_STR=',reference('Microsoft.Resources/deployments/deploySQLDB').outputs.jdbcConnString.value,'\nDB_NAME=',variables('artDBname'),'\nDB_ADMIN_USER=',variables('db_user'),'\nDB_ADMIN_PASSWD=',variables('db_password'),'\nSTO_ACT_NAME=',variables('storageAccountName'),'\nSTO_ACT_ENDPOINT=',reference(resourceId('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))).primaryEndpoints.blob,'\nSTO_CTR_NAME=',variables('vmStorageAccountContainerName'),'\nSTO_ACT_KEY=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2018-07-01').keys[0].value,'\nMASTER_KEY=',variables('masterKey'),'\nJOIN_KEY=',variables('joinKey'),'\nIS_PRIMARY=','false','\nLICENSE1=',variables('artifactoryLicense1'),'\nLICENSE2=',variables('artifactoryLicense2'),'\nLICENSE3=',variables('artifactoryLicense3'),'\nLICENSE4=',variables('artifactoryLicense4'),'\nLICENSE5=',variables('artifactoryLicense5'),'\n'))]"
+            "customData": "[base64(concat('#INSTALL SCRIPT INPUTS\nARTIFACTORY_VERSION=', parameters('artifactoryVersion'),'\nCERTIFICATE_KEY=',variables('certificateKey'),'\nCERTIFICATE=', variables('certificate'),'\nCERTIFICATE_DOMAIN=',variables('certificateDomain'),'\nDB_TYPE=',parameters('db_type'),'\nARTIFACTORY_SERVER_NAME=',variables('artifactoryServerName'),'\nEXTRA_JAVA_OPTS=',variables('extraJavaOptions'),'\nJDBC_STR=',reference('Microsoft.Resources/deployments/deploySQLDB').outputs.jdbcConnString.value,'\nDB_NAME=',variables('artDBname'),'\nDB_ADMIN_USER=',variables('db_user'),'\nDB_ADMIN_PASSWD=',variables('db_password'),'\nSTO_ACT_NAME=',variables('storageAccountName'),'\nSTO_ACT_ENDPOINT=',reference(resourceId('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))).primaryEndpoints.blob,'\nSTO_CTR_NAME=',variables('vmStorageAccountContainerName'),'\nSTO_ACT_KEY=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2018-07-01').keys[0].value,'\nMASTER_KEY=',variables('masterKey'),'\nJOIN_KEY=',variables('joinKey'),'\nIS_PRIMARY=','false','\nLICENSE1=',variables('artifactoryLicense1'),'\nLICENSE2=',variables('artifactoryLicense2'),'\nLICENSE3=',variables('artifactoryLicense3'),'\nLICENSE4=',variables('artifactoryLicense4'),'\nLICENSE5=',variables('artifactoryLicense5'),'\n'))]"
           },
           "networkProfile": {
             "networkInterfaceConfigurations": [
