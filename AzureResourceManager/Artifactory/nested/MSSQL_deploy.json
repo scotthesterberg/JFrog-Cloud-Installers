@@ -32,6 +32,12 @@
         "Standard",
         "Premium"
       ]
+    },
+    "databases": {
+      "type": "object"
+    },
+    "manual_db_url": {
+      "type": "string"
     }
   },
   "variables": {

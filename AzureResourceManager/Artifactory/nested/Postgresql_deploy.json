@@ -15,9 +15,13 @@
       "defaultValue": "xraypostgressrv",
       "minLength": 1
     },
-    "db_location": {
+    "db_name": {
       "type": "string",
-      "defaultValue": ""
+      "defaultValue": "artrtdb",
+      "minLength": 1
+    },
+    "db_location": {
+      "type": "string"
     },
     "skuCapacity": {
       "type": "int",
@@ -75,16 +79,27 @@
       "metadata": {
         "description": "Public Network Access"
       }
+    },
+    "db_edition": {
+      "type": "string",
+      "defaultValue": "Basic",
+      "allowedValues": [
+        "Basic",
+        "Standard",
+        "Premium"
+      ]
+    },
+    "manual_db_url": {
+      "type": "string"
     }
   },
   "variables": {
-    "db_location": "[if(equals(parameters('db_location'), ''), resourceGroup().location, parameters('db_location'))]"
   },
   "resources": [
     {
       "type": "Microsoft.DBforPostgreSQL/servers",
       "apiVersion": "2017-12-01",
-      "location": "[variables('db_location')]",
+      "location": "[parameters('db_location')]",
       "name": "[parameters('db_server')]",
       "properties": {
         "version": "[parameters('version')]",
@@ -110,7 +125,7 @@
           "name": "[uniqueString(parameters('db_server'), 'AllowAllWindowsAzureIps' )]",
           "type": "firewallRules",
           "apiVersion": "2017-12-01",
-          "location": "[variables('db_location')]",
+          "location": "[parameters('db_location')]",
           "dependsOn": [
             "[resourceId('Microsoft.DBforPostgreSQL/servers', parameters('db_server'))]"
           ],
