@@ -15,11 +15,6 @@
       "defaultValue": "xraypostgressrv",
       "minLength": 1
     },
-    "db_name": {
-      "type": "string",
-      "defaultValue": "artrtdb",
-      "minLength": 1
-    },
     "db_location": {
       "type": "string",
       "defaultValue": ""
@@ -80,22 +75,6 @@
       "metadata": {
         "description": "Public Network Access"
       }
-    },
-    "db_name": {
-      "type": "string",
-      "defaultValue": "artdb"
-    },
-    "db_edition": {
-      "type": "string",
-      "defaultValue": "Basic",
-      "allowedValues": [
-        "Basic",
-        "Standard",
-        "Premium"
-      ]
-    },
-    "manual_db_url": {
-      "type": "string"
     }
   },
   "variables": {
