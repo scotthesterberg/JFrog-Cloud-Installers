@@ -13,6 +13,7 @@ cd /opt/
 wget -O jfrog-xray-${XRAY_VERSION}-deb.tar.gz 'https://bintray.com/jfrog/jfrog-xray/download_file?agree=true&artifactPath=/jfrog/jfrog-xray/xray-deb/'${XRAY_VERSION}'/jfrog-xray-'${XRAY_VERSION}'-deb.tar.gz&callback_id=&product=org.grails.taglib.NamespacedTagDispatcher' \
 >> /var/log/download-xray.log 2>&1
 tar -xvf jfrog-xray-${XRAY_VERSION}-deb.tar.gz
+rm jfrog-xray-${XRAY_VERSION}-deb.tar.gz
 cd jfrog-xray-${XRAY_VERSION}-deb
 
 # Generate txt file with the parameters to use in the interactive installation script

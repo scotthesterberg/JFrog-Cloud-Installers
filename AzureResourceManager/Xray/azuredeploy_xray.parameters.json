@@ -1,0 +1,63 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "vmName": {
+      "value": "xray"
+    },
+    "adminUsername": {
+      "value": "vmuser"
+    },
+    "adminPassword": {
+      "value": "Password"
+    },
+    "virtualNetworkName": {
+      "value": "rtvnet"
+    },
+    "subnetName": {
+      "value": "rtmemberSubnet"
+    },
+    "virtualNetworkNewOrExisting": {
+      "value": "existing"
+    },
+    "virtualNetworkAddressPrefix": {
+      "value": "10.0.0.0/16"
+    },
+    "virtualNetworkResourceGroup": {
+      "value": "vnet2"
+    },
+    "virtualMachineSize": {
+      "value": "Standard_D4s_v3"
+    },
+    "subnetAddressPrefix": {
+      "value": "10.0.1.0/24"
+    },
+    "xrayVersion": {
+      "value": "3.5.2"
+    },
+    "artifactoryURL": {
+      "value": "rtinstance.westus2.cloudapp.azure.com"
+    },
+    "masterKey": {
+      "value": "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"
+    },
+    "joinKey": {
+      "value": "1302c43ffc8caba4ca3d2ac939c64772"
+    },
+    "db_type": {
+      "value": "Postgresql_existing.json"
+    },
+    "db_user": {
+      "value": "xray"
+    },
+    "db_password": {
+      "value": "Password"
+    },
+    "manual_db_url": {
+      "value": "jdbc:postgresql://postgressrvr.postgres.database.azure.com:5432"
+    },
+    "db_server": {
+      "value": "postgressrvr"
+    }
+  }
+}

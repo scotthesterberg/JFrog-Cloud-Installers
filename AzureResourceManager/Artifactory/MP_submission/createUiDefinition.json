@@ -405,8 +405,8 @@
             "toolTip": "Jdbc connection string for MSSQL or Postgresql",
             "constraints": {
               "required": false,
-              "regex": "^[a-z0-9A-Z]{1,15}$",
-              "validationMessage": "Only alphanumeric characters are allowed, and the value must be 1-15 characters long."
+              "regex": "..*",
+              "validationMessage": "DB connection string is not valid"
             }
           },
           {
