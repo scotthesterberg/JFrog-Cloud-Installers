@@ -47,7 +47,7 @@
       "value": "[parameters('db_location')]"
     },
     "databases": {
-      "type": "string",
+      "type": "object",
       "value": "[parameters('databases')]"
     }
   }
