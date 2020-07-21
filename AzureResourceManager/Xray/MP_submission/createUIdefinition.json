@@ -19,17 +19,6 @@
             "type": "Microsoft.Common.Section",
             "elements": [
               {
-                "name": "vmName",
-                "type": "Microsoft.Common.TextBox",
-                "label": "VM Name",
-                "toolTip": "Name of your virtual machine",
-                "constraints": {
-                  "required": true,
-                  "regex": "^[a-z0-9A-Z]{1,30}$",
-                  "validationMessage": "Only alphanumeric characters are allowed, and the value must be 1-30 characters long."
-                }
-              },
-              {
                 "name": "adminUsername",
                 "type": "Microsoft.Compute.UserNameTextBox",
                 "label": "Admin username",
