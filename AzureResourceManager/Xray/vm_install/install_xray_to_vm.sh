@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Upgrade version for every release
-XRAY_VERSION=3.5.2
+XRAY_VERSION=3.6.2
 
 export DEBIAN_FRONTEND=noninteractive
 
@@ -40,4 +40,3 @@ EOF
 
 # Remove Xray service from boot up run
 sudo systemctl disable xray.service
-
