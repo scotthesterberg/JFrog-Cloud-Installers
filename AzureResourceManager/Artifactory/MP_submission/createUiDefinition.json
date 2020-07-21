@@ -132,14 +132,10 @@
             "name": "artifactoryVersion",
             "type": "Microsoft.Common.DropDown",
             "label": "Artifactory-vm image version to deploy.",
-            "defaultValue": "7.4.3",
+            "defaultValue": "7.6.2",
             "toolTip": "Version of Artifactory to deploy",
             "constraints": {
               "allowedValues": [
-                {
-                  "label": "6.8.0",
-                  "value": "6.8.0"
-                },
                 {
                   "label": "6.16.0",
                   "value": "0.16.0"
@@ -163,6 +159,10 @@
                 {
                   "label": "7.4.3",
                   "value": "7.4.30"
+                },
+                {
+                  "label": "7.6.2",
+                  "value": "0.0.1"
                 }
               ],
               "required": true
