@@ -740,7 +740,7 @@
     {
       "type": "Microsoft.Resources/deployments",
       "name": "deploySQLDB",
-      "apiVersion": "2018-07-01",
+      "apiVersion": "2019-09-01",
       "properties": {
         "mode": "Incremental",
         "templateLink": {
