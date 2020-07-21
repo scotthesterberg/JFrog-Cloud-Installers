@@ -9,15 +9,9 @@
         "description": "Location for the resources."
       }
     },
-    "vmName": {
-      "type": "string",
-      "metadata": {
-        "title": "VM Name",
-        "description": "This is the name of the your VM"
-      }
-    },
     "clusterName": {
       "type": "string",
+      "defaultValue": "xray",
       "maxLength": 61,
       "metadata": {
         "description": "String used as a base for naming resources. Must be 3-61 characters in length and globally unique across Azure. A hash is prepended to this string for some resources, and resource-specific information is appended."
@@ -25,9 +19,9 @@
     },
     "xrayVersion": {
       "type": "string",
-      "defaultValue": "3.5.2",
+      "defaultValue": "0.0.3",
       "allowedValues": [
-        "3.5.2"
+        "0.0.3"
       ],
       "metadata": {
         "description": "Xray-vm image version to deploy."
@@ -176,8 +170,8 @@
     "namingInfix": "[toLower(substring(concat(parameters('clusterName'), uniqueString(resourceGroup().id)), 0, 9))]",
     "storageAccountName": "[concat(uniquestring(resourceGroup().id), 'sawinvm')]",
     "publicIPAddressName": "[concat(uniqueString(resourceGroup().id),'IP')]",
-    "vmName": "[parameters('vmName')]",
-    "nicName": "[concat(parameters('vmName'),'Nic')]",
+    "clusterName": "[parameters('clusterName')]",
+    "nicName": "[concat(variables('clusterName'),'Nic')]",
     "ipConfigName": "[concat(variables('namingInfix'), 'ipconfig')]",
     "vnetId": {
       "new": "[resourceId('Microsoft.Network/virtualNetworks',parameters('virtualNetworkName'))]",
@@ -193,10 +187,10 @@
     "masterKey": "[parameters('masterKey')]",
     "joinKey": "[parameters('joinKey')]",
     "osType": {
-      "publisher": "Canonical",
-      "offer": "UbuntuServer",
-      "sku": "18.04-LTS",
-      "version": "latest"
+      "publisher": "jfrog",
+      "offer": "x-ray-vm",
+      "sku": "x-ray-vm",
+      "version": "[parameters('xrayVersion')]"
     },
     "imageReference": "[variables('osType')]",
     "dbTemplate": "[parameters('db_type')]",
@@ -220,7 +214,7 @@
     {
       "condition": "[equals(parameters('virtualNetworkNewOrExisting'),'new')]",
       "type": "Microsoft.Network/virtualNetworks",
-      "apiVersion": "2017-09-01",
+      "apiVersion": "2020-05-01",
       "name": "[parameters('virtualNetworkName')]",
       "location": "[parameters('location')]",
       "properties": {
@@ -242,7 +236,7 @@
     {
       "type": "Microsoft.Network/publicIPAddresses",
       "name": "[variables('publicIPAddressName')]",
-      "apiVersion": "2015-06-15",
+      "apiVersion": "2020-05-01",
       "location": "[parameters('location')]",
       "properties": {
         "publicIPAllocationMethod": "[variables('publicIPAddressType')]"
@@ -251,7 +245,7 @@
     {
       "type": "Microsoft.Network/networkInterfaces",
       "name": "[variables('nicName')]",
-      "apiVersion": "2016-03-30",
+      "apiVersion": "2020-05-01",
       "location": "[parameters('location')]",
       "properties": {
         "ipConfigurations": [
@@ -271,7 +265,7 @@
         "enableIPForwarding": true
       },
       "dependsOn": [
-        "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressName'))]",
+        "[resourceId('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressName'))]",
         "[resourceId('Microsoft.Network/virtualNetworks/', parameters('virtualNetworkName'))]"
       ]
     },
@@ -289,7 +283,7 @@
     {
       "type": "Microsoft.Resources/deployments",
       "name": "deploySQLDB",
-      "apiVersion": "2018-07-01",
+      "apiVersion": "2019-09-01",
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -327,14 +321,19 @@
         "[resourceId('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
         "[resourceId('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
       ],
+      "plan": {
+        "name": "x-ray-vm",
+        "publisher": "jfrog",
+        "product": "x-ray-vm"
+      },
       "sku": {
         "name": "[parameters('virtualMachineSize')]",
         "tier": "Standard",
-        "capacity": "1"
+        "capacity": 1
       },
       "properties": {
         "singlePlacementGroup": true,
-        "overprovision": "false",
+        "overprovision": false,
         "upgradePolicy": {
           "mode": "Manual"
         },
@@ -342,7 +341,7 @@
           "storageProfile": {
             "osDisk": {
               "caching": "ReadWrite",
-              "diskSizeGB": "250",
+              "diskSizeGB": 250,
               "createOption": "FromImage"
             },
             "imageReference": "[variables('imageReference')]"
@@ -351,7 +350,7 @@
             "computerNamePrefix": "[variables('namingInfix')]",
             "adminUsername": "[parameters('adminUsername')]",
             "adminPassword": "[parameters('adminPassword')]",
-            "customData": "[base64(concat('#INSTALL SCRIPT INPUTS\nXRAY_VERSION=', parameters('xrayVersion'),'\nJDBC_STR=',reference('Microsoft.Resources/deployments/deploySQLDB').outputs.jdbcConnString.value,'\nARTIFACTORY_URL=',variables('artifactoryURL'),'\nDB_SERVER=',variables('db_server'),'\nDB_NAME=',variables('db_name'),'\nDB_ADMIN_USER=',variables('db_user'),'\nDB_ADMIN_PASSWD=',variables('db_password'),'\nMASTER_KEY=',variables('masterKey'),'\nJOIN_KEY=',variables('joinKey'),'\n'))]"
+            "customData": "[base64(concat('#INSTALL SCRIPT INPUTS\nXRAY_VERSION=', parameters('xrayVersion'),'\nARTIFACTORY_URL=',variables('artifactoryURL'),'\nDB_SERVER=',variables('db_server'),'\nDB_NAME=',variables('db_name'),'\nDB_ADMIN_USER=',variables('db_user'),'\nDB_ADMIN_PASSWD=',variables('db_password'),'\nMASTER_KEY=',variables('masterKey'),'\nJOIN_KEY=',variables('joinKey'),'\n'))]"
           },
           "networkProfile": {
             "networkInterfaceConfigurations": [
@@ -384,12 +383,11 @@
                   "autoUpgradeMinorVersion": false,
                   "settings": {
                     "fileUris": [
-                      "[uri(parameters('_artifactsLocation'), concat('vm_install/install_xray_to_vm.sh', parameters('_artifactsLocationSasToken')))]",
                       "[uri(parameters('_artifactsLocation'), concat('scripts/install_xray.sh', parameters('_artifactsLocationSasToken')))]"
                     ]
                   },
                   "protectedSettings": {
-                    "commandToExecute": "echo 'hello!' >> /opt/installation_log.txt"
+                    "commandToExecute": "./install_xray.sh >> /opt/installation_log1.txt"
                   }
                 }
               }

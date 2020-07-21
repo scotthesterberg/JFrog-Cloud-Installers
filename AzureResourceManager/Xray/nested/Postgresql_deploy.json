@@ -145,17 +145,17 @@
     }
   ],
   "outputs": {
-    "jdbcConnString": {
-      "type": "string",
-      "value": "[concat('jdbc:postgresql://', reference(concat('Microsoft.DBforPostgreSQL/servers/', parameters('db_server'))).fullyQualifiedDomainName, ':5432')]"
-    },
     "dbServerName": {
       "type": "string",
       "value": "[parameters('db_server')]"
     },
-    "xrayConnString": {
+    "db_edition": {
       "type": "string",
-      "value": "[concat('postgres://', reference(concat('Microsoft.DBforPostgreSQL/servers/', parameters('db_server'))).fullyQualifiedDomainName, ':5432')]"
+      "value": "[parameters('db_edition')]"
+    },
+    "manual_db_url": {
+      "type": "string",
+      "value": "[parameters('manual_db_url')]"
     }
   }
 }
