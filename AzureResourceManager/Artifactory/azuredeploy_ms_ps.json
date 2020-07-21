@@ -79,7 +79,7 @@
     },
     "artifactoryVersion": {
       "type": "string",
-      "defaultValue": "7.4.30",
+      "defaultValue": "0.0.1",
       "allowedValues": [
         "6.6.0",
         "6.6.1",
@@ -96,7 +96,8 @@
         "7.4.3",
         "7.4.30",
         "7.4.31",
-        "7.5.7"
+        "7.5.7",
+        "0.0.1"
       ],
       "metadata": {
         "description": "Artifactory-vm image version to deploy."
@@ -308,7 +309,7 @@
     "osType": {
       "publisher": "jfrog",
       "offer": "artifactory-vm",
-      "sku": "artifactory-vm-private",
+      "sku": "artifactory-vm",
       "version": "[parameters('artifactoryVersion')]"
     },
     "imageReference": "[variables('osType')]",
@@ -786,7 +787,7 @@
         "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]"
       ],
       "plan": {
-        "name": "artifactory-vm-private",
+        "name": "artifactory-vm",
         "publisher": "jfrog",
         "product": "artifactory-vm"
       },
@@ -885,7 +886,7 @@
         "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]"
       ],
       "plan": {
-        "name": "artifactory-vm-private",
+        "name": "artifactory-vm",
         "publisher": "jfrog",
         "product": "artifactory-vm"
       },
