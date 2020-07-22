@@ -57,7 +57,13 @@
       "defaultValue": "Disabled"
     },
     "databases": {
-      "type": "object"
+      "type": "object",
+      "defaultValue":
+      {
+        "name": "xray",
+        "charset": "UTF8",
+        "collation": "English_United States.1252"
+      }
     },
     "sslEnforcement": {
       "type": "string",
