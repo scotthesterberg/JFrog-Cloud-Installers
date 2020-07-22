@@ -20,14 +20,27 @@ You can deploy Postgresql instance using this link:
 <img src="https://aka.ms/deploytoazurebutton"/>
 </a>
 
+In the Databases field, use the object: 
+
+```
+  {
+    "properties": [
+      {
+        "name": "xray",
+        "charset": "UTF8",
+        "collation": "English_United States.1252"
+      }
+    ]
+  }
+```
 Before deploying Xray, please do following steps:
 1. Use the admin role given by Azure that you initially connected with to PSDB (for example xray) - Remember the password of this role to connect when setting up with Xray.
 
 2. Create a new role named xray@{hostname}, where {hostname} is a DB server name. 
 
-3. In the client tab (PgAdmin for example) right click on properties of role "azure_pg_admin" and under Membership tab, add the relevant "xray@{hostname}", click on the checkbox on the tag, save.
+3. Add xray@{hostname} membership to the base Azure user. In the client tab (PgAdmin for example) right click on properties of role "azure_pg_admin" and under Membership tab, add the relevant "xray@{hostname}", click on the checkbox on the tag, save.
 
-4. On the name of the Xray database right click and change owner to "xray@{hostname}"
+4. Change ownership of Xray database. Right click On the name of the database and change owner to "xray@{hostname}"
 
 After these steps are done, run Xray deployment. 
 
