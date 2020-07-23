@@ -145,6 +145,19 @@
             "charset": "[parameters('databases').properties[0].charset]",
             "collation": "[parameters('databases').properties[0].collation]"
           }
+        },
+        {
+          "type": "Microsoft.DBforPostgreSQL/servers/databases",
+          "apiversion": "2017-12-01",
+          "name": "[concat(parameters('db_server'), '/', parameters('databases').properties[1].name)]",
+          "condition": "[greater(length(parameters('databases').properties), 0)]",
+          "dependsOn": [
+            "[resourceId('Microsoft.DBforPostgreSQL/servers', parameters('db_server'))]"
+          ],
+          "properties": {
+            "charset": "[parameters('databases').properties[1].charset]",
+            "collation": "[parameters('databases').properties[1].collation]"
+          }
         }
       ]
     }
@@ -152,7 +165,7 @@
   "outputs": {
     "jdbcConnString": {
       "type": "string",
-      "value": "[concat('jdbc:postgresql://', reference(concat('Microsoft.DBforPostgreSQL/servers/', parameters('db_server'))).fullyQualifiedDomainName, ':5432')]"
+      "value": "[concat('jdbc:postgresql://', reference(resourceId('Microsoft.DBforPostgreSQL/servers/', parameters('db_server'))).fullyQualifiedDomainName, ':5432')]"
     },
     "dbServerName": {
       "type": "string",
@@ -160,7 +173,7 @@
     },
     "xrayConnString": {
       "type": "string",
-      "value": "[concat('postgres://', reference(concat('Microsoft.DBforPostgreSQL/servers/', parameters('db_server'))).fullyQualifiedDomainName, ':5432')]"
+      "value": "[concat('postgres://', reference(resourceId('Microsoft.DBforPostgreSQL/servers/', parameters('db_server'))).fullyQualifiedDomainName, ':5432')]"
     }
   }
 }

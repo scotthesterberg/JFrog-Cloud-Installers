@@ -165,7 +165,7 @@
   "outputs": {
     "jdbcConnString": {
       "type": "string",
-      "value": "[concat('jdbc:postgresql://', reference(concat('Microsoft.DBforPostgreSQL/servers/', parameters('db_server'))).fullyQualifiedDomainName, ':5432')]"
+      "value": "[concat('jdbc:postgresql://', reference(resourceId('Microsoft.DBforPostgreSQL/servers/', parameters('db_server'))).fullyQualifiedDomainName, ':5432')]"
     },
     "dbServerName": {
       "type": "string",
@@ -173,7 +173,7 @@
     },
     "xrayConnString": {
       "type": "string",
-      "value": "[concat('postgres://', reference(concat('Microsoft.DBforPostgreSQL/servers/', parameters('db_server'))).fullyQualifiedDomainName, ':5432')]"
+      "value": "[concat('postgres://', reference(resourceId('Microsoft.DBforPostgreSQL/servers/', parameters('db_server'))).fullyQualifiedDomainName, ':5432')]"
     }
   }
 }

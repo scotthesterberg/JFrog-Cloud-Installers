@@ -164,13 +164,13 @@
       }
     },
     "certificate": {
-      "type": "string",
+      "type": "securestring",
       "metadata": {
         "description": "To use Artifactory as docker registry you need to provide wild card valid Certificate. Provide your SSL Certificate."
       }
     },
     "certificateKey": {
-      "type": "string",
+      "type": "securestring",
       "metadata":  {
         "description": "Provide your SSL Certificate key"
       }
@@ -417,7 +417,7 @@
       "location": "[parameters('location')]",
       "apiVersion": "2020-03-01",
       "dependsOn": [
-        "[concat('Microsoft.Network/networkSecurityGroups/', variables('nsgName'))]"
+        "[resourceId('Microsoft.Network/networkSecurityGroups/', variables('nsgName'))]"
       ],
       "properties": {
         "addressSpace": {
@@ -453,9 +453,9 @@
       "name": "[variables('nicPrimaryName')]",
       "location": "[parameters('location')]",
       "dependsOn": [
-        "[concat('Microsoft.Network/publicIPAddresses/', variables('pipPrimaryName'))]",
-        "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]",
-        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsgName'))]"
+        "[resourceId('Microsoft.Network/publicIPAddresses/', variables('pipPrimaryName'))]",
+        "[resourceId('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]",
+        "[resourceId('Microsoft.Network/networkSecurityGroups/', variables('nsgName'))]"
       ],
       "properties": {
         "ipConfigurations": [
@@ -480,9 +480,9 @@
       "name": "[variables('nicMemberName')]",
       "location": "[parameters('location')]",
       "dependsOn": [
-        "[concat('Microsoft.Network/publicIPAddresses/', variables('pipMemberName'))]",
-        "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]",
-        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsgName'))]"
+        "[resourceId('Microsoft.Network/publicIPAddresses/', variables('pipMemberName'))]",
+        "[resourceId('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]",
+        "[resourceId('Microsoft.Network/networkSecurityGroups/', variables('nsgName'))]"
       ],
       "properties": {
         "ipConfigurations": [
@@ -540,8 +540,8 @@
         "name": "Standard"
       },
       "dependsOn": [
-        "[concat('Microsoft.Network/publicIPAddresses/', variables('pipPrimaryName'))]",
-        "[concat('Microsoft.Network/publicIPAddresses/', variables('pipMemberName'))]"
+        "[resourceId('Microsoft.Network/publicIPAddresses/', variables('pipPrimaryName'))]",
+        "[resourceId('Microsoft.Network/publicIPAddresses/', variables('pipMemberName'))]"
       ],
       "tags":{
         "displayName": "Load Balancer"
@@ -781,10 +781,10 @@
       "location": "[parameters('location')]",
       "apiVersion": "2018-10-01",
       "dependsOn": [
-        "[concat('Microsoft.Network/loadBalancers/', variables('lbName'))]",
-        "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]",
-        "[concat('Microsoft.Resources/deployments/', 'deploySQLDB')]",
-        "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]"
+        "[resourceId('Microsoft.Network/loadBalancers/', variables('lbName'))]",
+        "[resourceId('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]",
+        "[resourceId('Microsoft.Resources/deployments/', 'deploySQLDB')]",
+        "[resourceId('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]"
       ],
       "plan": {
         "name": "artifactory-vm",
@@ -879,11 +879,11 @@
       "location": "[parameters('location')]",
       "apiVersion": "2018-10-01",
       "dependsOn": [
-        "[concat('Microsoft.Network/loadBalancers/', variables('lbName'))]",
-        "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]",
-        "[concat('Microsoft.Compute/virtualMachineScaleSets/', variables('scaleSetPrimaryName'))]",
-        "[concat('Microsoft.Resources/deployments/', 'deploySQLDB')]",
-        "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]"
+        "[resourceId('Microsoft.Network/loadBalancers/', variables('lbName'))]",
+        "[resourceId('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]",
+        "[resourceId('Microsoft.Compute/virtualMachineScaleSets/', variables('scaleSetPrimaryName'))]",
+        "[resourceId('Microsoft.Resources/deployments/', 'deploySQLDB')]",
+        "[resourceId('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]"
       ],
       "plan": {
         "name": "artifactory-vm",

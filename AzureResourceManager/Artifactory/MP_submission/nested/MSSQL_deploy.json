@@ -64,7 +64,7 @@
           "location": "[parameters('db_location')]",
           "apiVersion": "2020-02-02-preview",
           "dependsOn": [
-            "[concat('Microsoft.Sql/servers/', parameters('db_server'))]"
+            "[resourceId('Microsoft.Sql/servers/', parameters('db_server'))]"
           ],
           "properties": {
             "startIpAddress": "0.0.0.0",
@@ -95,7 +95,7 @@
   "outputs": {
     "jdbcConnString": {
       "type": "string",
-      "value": "[concat('jdbc:sqlserver://', reference(concat('Microsoft.Sql/servers/', parameters('db_server'))).fullyQualifiedDomainName, ':1433')]"
+      "value": "[concat('jdbc:sqlserver://', reference(resourceId('Microsoft.Sql/servers/', parameters('db_server'))).fullyQualifiedDomainName, ':1433')]"
     }
   }
 }

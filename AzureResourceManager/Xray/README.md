@@ -1,20 +1,20 @@
 # Setup JFrog Xray
-Recommended way of deployment is thru Azure marketplace.
+The recommended way of deploying is through the Azure marketplace.
 
 <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fjfrog%2FJFrog-Cloud-Installers%2Farm-xray%2FAzureResourceManager%2FXray%2Fazuredeploy_xray_vmss.json" target="_blank">
 <img src="https://aka.ms/deploytoazurebutton"/>
 </a>
 
-This template can help you setup the [JFrog Xray](https://jfrog.com/xray/) on Azure as a Custom Deployment.
+This template can help you setup  [JFrog Xray](https://jfrog.com/xray/) on Azure.
 
 ## Prerequisites 
-JFrog Xray is an addition to JFrog Artifactory. 
-To be able to use it you need to have Artifactory instance deployed in Azure with Enterprise+ license, or Enterprise license with Xray addon.
-Deployed Postgresql instance (if "existing DB" is selected as a parameter).
+1. JFrog Xray is an addition to JFrog Artifactory. 
+    * To be able to use it, you need to have an Artifactory instance deployed in Azure with the appropriate license. If you do not have an Xray compatible license, you can [get a free trial](https://jfrog.com/xray/free-trial/).
+
+2. Deployed Postgresql instance (if "existing DB" is selected as a parameter).
 
 ## Postgresql deployment
-Xray could fail to connect to "out of the box" Azure Postgresql, [issue description](https://github.com/jfrog/charts/issues/422#issuecomment-516431036).
-You can deploy Postgresql instance using this link:
+Xray could fail to connect to "out of the box" Azure Postgresql. You can deploy a compatible Postgresql instance using this link:
 
 <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fjfrog%2FJFrog-Cloud-Installers%2Farm-xray%2FAzureResourceManager%2FPostgresql%2FazurePostgresDBDeploy.json" target="_blank">
 <img src="https://aka.ms/deploytoazurebutton"/>
@@ -45,9 +45,9 @@ Before deploying Xray, please do following steps:
 After these steps are done, run Xray deployment. 
 
 ## Installation
-1. Click "Deploy to Azure" button. If you haven't got an Azure subscription, it will guide you on how to signup for a free trial.
+1. Click "Deploy to Azure" button. If you don't have an Azure subscription, it will guide you on how to signup for a free trial.
 
-2. Enter a valid values to parameters. Make sure to use Artifactory Join key, which you can copy from Artifactory UI, Security -> Settings -> Connection details 
+2. Fill out the form. Make sure to use the Artifactory Join key, which you can copy from the Artifactory UI, Security -> Settings -> Connection details 
 
 3. Click Review + Create, then click Create to start the deployment 
 
