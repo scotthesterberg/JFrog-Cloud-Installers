@@ -7,7 +7,7 @@ Recommended way of deployment is thru Azure marketplace.
 
 This template can help you setup the [JFrog Xray](https://jfrog.com/xray/) on Azure as a Custom Deployment.
 
-## Prerequisits 
+## Prerequisites 
 JFrog Xray is an addition to JFrog Artifactory. 
 To be able to use it you need to have Artifactory instance deployed in Azure with Enterprise+ license, or Enterprise license with Xray addon.
 Deployed Postgresql instance (if "existing DB" is selected as a parameter).

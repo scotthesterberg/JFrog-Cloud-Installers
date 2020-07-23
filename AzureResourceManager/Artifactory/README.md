@@ -1,9 +1,9 @@
 # Setup Artifactory Enterprise
 
-<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FJFrogDev%2FJFrog-Cloud-Installers%2Fmaster%2FAzureResourceManager%2Fazuredeploy.json" target="_blank">
-<img src="http://azuredeploy.net/deploybutton.png"/>
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fjfrog%2FJFrog-Cloud-Installers%2Farm-xray%2FAzureResourceManager%2FArtifactory%2Fazuredeploy_ms_ps.json" target="_blank">
+<img src="https://aka.ms/deploytoazurebutton"/>
 </a>
-<a href="http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2FJFrogDev%2FJFrog-Cloud-Installers%2Fmaster%2FAzureResourceManager%2Fazuredeploy.json" target="_blank">
+<a href="http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fjfrog%2FJFrog-Cloud-Installers%2Farm-xray%2FAzureResourceManager%2FArtifactory%2Fazuredeploy_ms_ps.json" target="_blank">
 <img src="http://armviz.io/visualizebutton.png"/>
 </a>
 
@@ -20,7 +20,7 @@ This template can help you setup the [Artifactory Enterprise](https://jfrog.com/
 
 ![screenshot](images/Parameters.png)
 
-3. Click on Purchase to start deploying resources. It will deploy MsSQL database, Azure Blob storage container, VM installing Nginx and Artifactory and Load balancer.
+3. Click on Review + Create, then on Create to start deploying resources. It will deploy MsSQL or Postgresql database (or it can use existing), Azure Blob storage container, VM installing Nginx and Artifactory and Load balancer.
 
 4. Once deployment is done. Copy FQDN from Output of deployment template.
 
@@ -29,8 +29,8 @@ This template can help you setup the [Artifactory Enterprise](https://jfrog.com/
 6. You will see specified artifactory member nodes in 'Admin ->  High Availability' page.
 
 ### Note: 
-1. This template only supports Artifactory version 5.8.x and above.
-2. Turn off daily backups.  Read Documentation provided [here](https://www.jfrog.com/confluence/display/RTF/Managing+Backups)
+1. This template only supports Artifactory version 6.18.x and above.
+2. Turn off daily backups. Read Documentation provided [here](https://www.jfrog.com/confluence/display/RTF/Managing+Backups)
 3. Use SSL Certificate with valid wild card to you artifactory as docker registry with subdomain method.
 4. Input values for 'adminUsername' and 'adminPassword' parameters needs to follow azure VM access rules.
 5. One primary node is configured automatically. And, Minimum 1 member node is expected for the Artifactory HA installation.
