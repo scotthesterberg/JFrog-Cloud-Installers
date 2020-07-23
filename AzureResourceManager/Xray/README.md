@@ -62,6 +62,8 @@ After these steps are done, run Xray deployment.
 
 ### Steps to upgrade JFrog Xray version
 
+ARM templates uses a debian installation and you can follow the [official instructions](https://www.jfrog.com/confluence/display/JFROG/Upgrading+Xray#UpgradingXray-InteractiveScriptUpgrade(recommended).1) but for your convenience, you can use this method.
+
 SSH to the Xray VM and CD to the /opt/ folder. Create an empty file upgrade.sh
 
 ``touch upgrade.sh``
