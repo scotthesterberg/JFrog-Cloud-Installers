@@ -44,7 +44,31 @@
   "resources": [
   ],
   "outputs": {
-    "jdbcConnString": {
+    "db_user": {
+      "type": "string",
+      "value": "[parameters('db_user')]"
+    },
+    "db_server": {
+      "type": "string",
+      "value": "[parameters('db_server')]"
+    },
+    "db_name": {
+      "type": "string",
+      "value": "[parameters('db_name')]"
+    },
+    "db_location": {
+      "type": "string",
+      "value": "[parameters('db_location')]"
+    },
+    "db_edition": {
+      "type": "string",
+      "value": "[parameters('db_edition')]"
+    },
+    "databases": {
+      "type": "object",
+      "value": "[parameters('databases')]"
+    },
+    "dbUrl": {
       "type": "string",
       "value": "[parameters('manual_db_url')]"
     }

@@ -96,6 +96,14 @@
     "jdbcConnString": {
       "type": "string",
       "value": "[concat('jdbc:sqlserver://', reference(resourceId('Microsoft.Sql/servers/', parameters('db_server'))).fullyQualifiedDomainName, ':1433')]"
+    },
+    "dbUrl": {
+      "type": "string",
+      "value": "[parameters('manual_db_url')]"
+    },
+    "databases": {
+      "type": "object",
+      "value": "[parameters('databases')]"
     }
   }
 }
