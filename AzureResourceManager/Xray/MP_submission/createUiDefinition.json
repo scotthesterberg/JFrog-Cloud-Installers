@@ -172,7 +172,7 @@
               "password": "Artifactory join Key",
               "confirmPassword": "Confirm join Key"
             },
-            "toolTip": "Join key from Artifactory cluster. You can see Join key in Security - Settings - Connection details",
+            "toolTip": "Join key from Artifactory cluster. You can copy Join key from the Artifactory UI, Security -> Settings -> Connection details",
             "constraints": {
               "required": true,
               "regex": "^[a-z0-9A-Z]{1,32}$",
@@ -186,11 +186,11 @@
             "name": "artifactoryURL",
             "type": "Microsoft.Common.TextBox",
             "label": "Provide artifactory URL to connect Xray instance",
-            "defaultValue": "myorgartifactory.com",
-            "toolTip": "Provide Artifactory URL without http:// or https://",
+            "defaultValue": "https://myorgartifactory.com",
+            "toolTip": "Provide Artifactory URL",
             "constraints": {
               "required": true,
-              "regex": "^[a-z0-9]+\\.[a-z]+(\\/[a-zA-Z0-9#]+\\/?)*$",
+              "regex": "^(https?)://[^\\s/$.?#].[^\\s]*$",
               "validationMessage": "URL is not valid"
             }
           }
@@ -211,7 +211,7 @@
             "visible": true,
             "options": {
               "icon": "Info",
-              "text": "You can deploy a new Postgresql server or use your existing Postgres server and database"
+              "text": "You can deploy a new Postgresql server or use your existing Postgres server and database. Please make sure Postgresql instance is set up correctly before Xray deployment. Check README.md https://github.com/jfrog/JFrog-Cloud-Installers/blob/arm-xray/AzureResourceManager/Xray/README.md#postgresql-deployment. You can use Postgresql template from here https://github.com/jfrog/JFrog-Cloud-Installers/tree/arm-xray/AzureResourceManager/Postgresql"
             }
           },
           {
