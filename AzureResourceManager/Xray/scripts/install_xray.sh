@@ -19,7 +19,7 @@ EOF
 # Both application should be deployed in the same Virtual Networks
 HOSTNAME=$(hostname -i)
 sed -i -e "s/ip:..*/ip: ${HOSTNAME}/" /var/opt/jfrog/xray/etc/system.yaml
-sed -i -e "s/jfrogUrl:..*/jfrogUrl: \"http:\/\/${ARTIFACTORY_URL}\"/" /var/opt/jfrog/xray/etc/system.yaml
+sed -i -e "s/jfrogUrl:..*/jfrogUrl: \"${ARTIFACTORY_URL}\"/" /var/opt/jfrog/xray/etc/system.yaml
 sed -i -e "s/joinKey:..*/joinKey: ${JOIN_KEY}/" /var/opt/jfrog/xray/etc/system.yaml
 # DB configuration
 sed -i -e "s/url: postgres:..*/url: \"postgres:\/\/${DB_SERVER}.postgres.database.azure.com:5432\/${DB_NAME}?sslmode=disable\"/" /var/opt/jfrog/xray/etc/system.yaml
