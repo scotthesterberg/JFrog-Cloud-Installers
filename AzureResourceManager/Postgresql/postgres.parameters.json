@@ -3,10 +3,10 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "db_user": {
-      "value": "xray"
+      "value": "username"
     },
     "db_password": {
-      "value": "Password123!"
+      "value": "password"
     },
     "db_server": {
       "value": "postgressrvr"
