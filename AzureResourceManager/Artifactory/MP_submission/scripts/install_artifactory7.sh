@@ -79,6 +79,8 @@ cat <<EOF >/etc/nginx/nginx.conf
     }
 EOF
 
+if [[ -n "${CERTIFICATE}" ]] || [[ -n "${CERTIFICATE_KEY}" ]]; then
+
 cat <<EOF >/etc/nginx/conf.d/artifactory.conf
 ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
 ssl_certificate      /etc/pki/tls/certs/cert.pem;
@@ -119,7 +121,44 @@ server {
     }
 }
 EOF
+else
 
+cat <<EOF >/etc/nginx/conf.d/artifactory.conf
+## server configuration
+server {
+  listen 80 ;
+  server_name ~(?<repo>.+)\\.${CERTIFICATE_DOMAIN} artifactory ${ARTIFACTORY_SERVER_NAME}.${CERTIFICATE_DOMAIN};
+  if (\$http_x_forwarded_proto = '') {
+    set \$http_x_forwarded_proto  \$scheme;
+  }
+  ## Application specific logs
+  ## access_log /var/log/nginx/artifactory-access.log timing;
+  ## error_log /var/log/nginx/artifactory-error.log;
+  rewrite ^/$ /ui/ redirect;
+  rewrite ^/ui$ /ui/ redirect;
+  chunked_transfer_encoding on;
+  client_max_body_size 0;
+  location / {
+    proxy_read_timeout  2400;
+    proxy_pass_header   Server;
+    proxy_cookie_path   ~*^/.* /;
+    proxy_pass          http://127.0.0.1:8082;
+    proxy_next_upstream error timeout non_idempotent;
+    proxy_next_upstream_tries    1;
+    proxy_set_header    X-JFrog-Override-Base-Url \$http_x_forwarded_proto://\$host:\$server_port;
+    proxy_set_header    X-Forwarded-Port  \$server_port;
+    proxy_set_header    X-Forwarded-Proto \$http_x_forwarded_proto;
+    proxy_set_header    Host              \$http_host;
+    proxy_set_header    X-Forwarded-For   \$proxy_add_x_forwarded_for;
+
+          location ~ ^/artifactory/ {
+            proxy_pass    http://127.0.0.1:8081;
+        }
+    }
+}
+EOF
+
+fi
 
 mkdir -p /opt/jfrog/artifactory/var/etc/artifactory/
 cat <<EOF >/opt/jfrog/artifactory/var/etc/artifactory/artifactory.cluster.license
