@@ -204,16 +204,16 @@ cat <<EOF >/var/opt/jfrog/artifactory/etc/artifactory/binarystore.xml
 EOF
 
 if [[ -n "${CERTIFICATE}" ]] || [[ -n "${CERTIFICATE_KEY}" ]]; then
-    cat <<EOF >/tmp/temp.pem
+cat <<EOF >/tmp/temp.pem
       ${CERTIFICATE}
 EOF
-    cat /tmp/temp.pem | sed 's/CERTIFICATE----- /&\n/g' | sed 's/ -----END/\n-----END/g' | awk '{if($0 ~ /----/) {print;} else { gsub(/ /,"\n");print;}}' > /etc/pki/tls/certs/cert.pem
+cat /tmp/temp.pem | sed 's/CERTIFICATE----- /&\n/g' | sed 's/ -----END/\n-----END/g' | awk '{if($0 ~ /----/) {print;} else { gsub(/ /,"\n");print;}}' > /etc/pki/tls/certs/cert.pem
     rm /tmp/temp.pem
 
     cat <<EOF >/tmp/temp.key
       ${CERTIFICATE_KEY}
 EOF
-    cat /tmp/temp.key | sed 's/KEY----- /&\n/' | sed 's/ -----END/\n-----END/' | awk '{if($0 ~ /----/) {print;} else { gsub(/ /,"\n");print;}}' > /etc/pki/tls/private/cert.key
+cat /tmp/temp.key | sed 's/KEY----- /&\n/' | sed 's/ -----END/\n-----END/' | awk '{if($0 ~ /----/) {print;} else { gsub(/ /,"\n");print;}}' > /etc/pki/tls/private/cert.key
     rm /tmp/temp.key
 fi
 

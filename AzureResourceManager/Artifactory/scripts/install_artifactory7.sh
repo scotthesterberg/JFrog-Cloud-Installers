@@ -10,6 +10,8 @@ STORAGE_ACCT=$(cat /var/lib/cloud/instance/user-data.txt | grep "^STO_ACT_NAME="
 STORAGE_CONTAINER=$(cat /var/lib/cloud/instance/user-data.txt | grep "^STO_CTR_NAME=" | sed "s/STO_CTR_NAME=//")
 STORAGE_ACCT_KEY=$(cat /var/lib/cloud/instance/user-data.txt | grep "^STO_ACT_KEY=" | sed "s/STO_ACT_KEY=//")
 ARTIFACTORY_VERSION=$(cat /var/lib/cloud/instance/user-data.txt | grep "^ARTIFACTORY_VERSION=" | sed "s/ARTIFACTORY_VERSION=//")
+CERTIFICATE=$(cat /var/lib/cloud/instance/user-data.txt | grep "^CERTIFICATE=" | sed "s/CERTIFICATE=//")
+CERTIFICATE_KEY=$(cat /var/lib/cloud/instance/user-data.txt | grep "^CERTIFICATE_KEY=" | sed "s/CERTIFICATE_KEY=//")
 MASTER_KEY=$(cat /var/lib/cloud/instance/user-data.txt | grep "^MASTER_KEY=" | sed "s/MASTER_KEY=//")
 IS_PRIMARY=$(cat /var/lib/cloud/instance/user-data.txt | grep "^IS_PRIMARY=" | sed "s/IS_PRIMARY=//")
 ARTIFACTORY_LICENSE_1=$(cat /var/lib/cloud/instance/user-data.txt | grep "^LICENSE1=" | sed "s/LICENSE1=//")
@@ -23,9 +25,8 @@ export DEBIAN_FRONTEND=noninteractive
 mkdir -p /etc/pki/tls/private/ /etc/pki/tls/certs/
 openssl req -nodes -x509 -newkey rsa:4096 -keyout /etc/pki/tls/private/example.key -out /etc/pki/tls/certs/example.pem -days 356 -subj "/C=US/ST=California/L=SantaClara/O=IT/CN=*.localhost"
 
-# TEMPORARY. Will be moved to the VM image script. Install Postgresql driver
+# Install Postgresql driver
 curl --retry 5 -L -o /opt/jfrog/artifactory/app/artifactory/tomcat/lib/postgresql-9.4.1212.jar https://jdbc.postgresql.org/download/postgresql-9.4.1212.jar >> /tmp/install-databse-driver.log 2>&1
-
 
 CERTIFICATE_DOMAIN=$(cat /var/lib/cloud/instance/user-data.txt | grep "^CERTIFICATE_DOMAIN=" | sed "s/CERTIFICATE_DOMAIN=//")
 [ -z "$CERTIFICATE_DOMAIN" ] && CERTIFICATE_DOMAIN=artifactory
@@ -78,8 +79,6 @@ cat <<EOF >/etc/nginx/nginx.conf
     }
 EOF
 
-if [[ -n "${CERTIFICATE}" ]] || [[ -n "${CERTIFICATE_KEY}" ]]; then
-
 cat <<EOF >/etc/nginx/conf.d/artifactory.conf
 ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
 ssl_certificate      /etc/pki/tls/certs/cert.pem;
@@ -120,44 +119,7 @@ server {
     }
 }
 EOF
-else
 
-cat <<EOF >/etc/nginx/conf.d/artifactory.conf
-## server configuration
-server {
-  listen 80 ;
-  server_name ~(?<repo>.+)\\.${CERTIFICATE_DOMAIN} artifactory ${ARTIFACTORY_SERVER_NAME}.${CERTIFICATE_DOMAIN};
-  if (\$http_x_forwarded_proto = '') {
-    set \$http_x_forwarded_proto  \$scheme;
-  }
-  ## Application specific logs
-  ## access_log /var/log/nginx/artifactory-access.log timing;
-  ## error_log /var/log/nginx/artifactory-error.log;
-  rewrite ^/$ /ui/ redirect;
-  rewrite ^/ui$ /ui/ redirect;
-  chunked_transfer_encoding on;
-  client_max_body_size 0;
-  location / {
-    proxy_read_timeout  2400;
-    proxy_pass_header   Server;
-    proxy_cookie_path   ~*^/.* /;
-    proxy_pass          http://127.0.0.1:8082;
-    proxy_next_upstream error timeout non_idempotent;
-    proxy_next_upstream_tries    1;
-    proxy_set_header    X-JFrog-Override-Base-Url \$http_x_forwarded_proto://\$host:\$server_port;
-    proxy_set_header    X-Forwarded-Port  \$server_port;
-    proxy_set_header    X-Forwarded-Proto \$http_x_forwarded_proto;
-    proxy_set_header    Host              \$http_host;
-    proxy_set_header    X-Forwarded-For   \$proxy_add_x_forwarded_for;
-
-          location ~ ^/artifactory/ {
-            proxy_pass    http://127.0.0.1:8081;
-        }
-    }
-}
-EOF
-
-fi
 
 mkdir -p /opt/jfrog/artifactory/var/etc/artifactory/
 cat <<EOF >/opt/jfrog/artifactory/var/etc/artifactory/artifactory.cluster.license
@@ -242,16 +204,16 @@ cat <<EOF >/var/opt/jfrog/artifactory/etc/artifactory/binarystore.xml
 EOF
 
 if [[ -n "${CERTIFICATE}" ]] || [[ -n "${CERTIFICATE_KEY}" ]]; then
-    cat <<EOF >/tmp/temp.pem
+cat <<EOF >/tmp/temp.pem
       ${CERTIFICATE}
 EOF
-    cat /tmp/temp.pem | sed 's/CERTIFICATE----- /&\n/g' | sed 's/ -----END/\n-----END/g' | awk '{if($0 ~ /----/) {print;} else { gsub(/ /,"\n");print;}}' > /etc/pki/tls/certs/cert.pem
+cat /tmp/temp.pem | sed 's/CERTIFICATE----- /&\n/g' | sed 's/ -----END/\n-----END/g' | awk '{if($0 ~ /----/) {print;} else { gsub(/ /,"\n");print;}}' > /etc/pki/tls/certs/cert.pem
     rm /tmp/temp.pem
 
     cat <<EOF >/tmp/temp.key
       ${CERTIFICATE_KEY}
 EOF
-    cat /tmp/temp.key | sed 's/KEY----- /&\n/' | sed 's/ -----END/\n-----END/' | awk '{if($0 ~ /----/) {print;} else { gsub(/ /,"\n");print;}}' > /etc/pki/tls/private/cert.key
+cat /tmp/temp.key | sed 's/KEY----- /&\n/' | sed 's/ -----END/\n-----END/' | awk '{if($0 ~ /----/) {print;} else { gsub(/ /,"\n");print;}}' > /etc/pki/tls/private/cert.key
     rm /tmp/temp.key
 fi
 
