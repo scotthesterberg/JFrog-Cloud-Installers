@@ -101,7 +101,7 @@
             "name": "artifactoryVersion",
             "type": "Microsoft.Common.DropDown",
             "label": "JFrog Container Registry-vm image version to deploy.",
-            "defaultValue": "7.11.2",
+            "defaultValue": "7.12.5",
             "toolTip": "Version of JFrog Container Registry to deploy",
             "constraints": {
               "allowedValues": [
@@ -136,7 +136,11 @@
                 {
                   "label": "7.11.2",
                   "value": "0.0.61"
-                }
+                },
+		{
+	          "label": "7.12.5",
+		  "value": "0.0.8"
+		}
               ],
               "required": true
             },
