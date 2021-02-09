@@ -5,6 +5,7 @@ postgres_server_data_location: /var/lib/pgsql/{{ postgres_server_version }}/data
 postgres_server_config_location: "{{ postgres_server_data_location }}"
 postgres_server_service_name: postgresql-{{ postgres_server_version }}
 postgres_server_initdb_become: yes
+postgres_server_user: root
 
 postgres_server_config_data_directory: null
 postgres_server_config_hba_file: null
