@@ -58,7 +58,7 @@
     base: http://download.postgresql.org/pub/repos/yum
     ver: "{{ ansible_distribution_version }}"
   yum:
-    name: "{{ base }}/{{ postgres_server_version }}/redhat/rhel-{{ ver }}-x86_64/{{ latest_version.stdout }}"
+    name: "{{ base }}/common/redhat/rhel-{{ ver }}-x86_64/{{ latest_version.stdout }}"
     state: present
   become: yes
 
