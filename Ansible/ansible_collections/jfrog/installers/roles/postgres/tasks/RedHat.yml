@@ -41,7 +41,7 @@
     ver: "{{ ansible_distribution_version }}"
   shell: |
     set -eo pipefail
-    wget -O - {{ base }}/{{ postgres_server_version }}/redhat/rhel-{{ ver }}-x86_64/ 2>/dev/null | \
+    wget -O - {{ base }}/common/redhat/rhel-{{ ver }}-x86_64/ 2>/dev/null | \
     grep 'pgdg-redhat' | \
     perl -pe 's/^.*rpm">//g' | \
     perl -pe 's/<\/a>.*//g' | \
