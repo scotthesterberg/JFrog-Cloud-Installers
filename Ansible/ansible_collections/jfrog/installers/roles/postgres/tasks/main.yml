@@ -36,7 +36,7 @@
   vars:
     ansible_become: "{{ postgres_server_initdb_become }}"
     ansible_become_user: "{{ postgres_server_user }}"
-  shell: "{{ postgres_server_cmd_initdb }} {{ postgres_server_data_location }}"
+  command: "{{ postgres_server_cmd_initdb }} {{ postgres_server_data_location }}"
   args:
     creates: "{{ postgres_server_data_location }}/PG_VERSION"
 
